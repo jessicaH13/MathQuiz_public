@@ -1118,7 +1118,7 @@
 
   /* ─── BOT SIMULATION ───────────────────────────────────────── */
   function setBotStatus(idx, html, className) {
-    document.getElementById('compStatus'+idx).innerHTML = html;
+    // compStatus elements removed; no-op
   }
   function updateBotUI(idx) {
     document.getElementById('compScore'+idx).textContent = botState[idx].score;
@@ -1132,14 +1132,9 @@
       const correct = Math.random() < bot.correctRate;
       botState[idx].score += correct ? 10 : -5;
       botState[idx].answered += 1;
-      const statusHtml = correct
-        ? '<span class="comp-answered correct">✓ Correct</span>'
-        : '<span class="comp-answered wrong">✗ Incorrect</span>';
-      setBotStatus(idx, statusHtml);
       updateBotUI(idx);
       updateRankBanner();
     }, delay);
-    setBotStatus(idx, '<span class="comp-typing"><span></span><span></span><span></span></span>');
   }
   function clearBotTimeouts() {
     botState.forEach(b => { if (b.timeout) clearTimeout(b.timeout); b.timeout = null; });
