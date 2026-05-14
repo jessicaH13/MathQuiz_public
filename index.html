@@ -150,30 +150,42 @@
     /* ── SPLIT TASK LAYOUT ──────────────────────────────────── */
     #taskPanel {
       display: grid;
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
       gap: 0;
       min-height: 580px;
+    }
+    .task-competition-bar {
+      background: #f1f5f9;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 12px 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .task-competition-bar .rank-banner {
+      font-size: .8rem;
+      padding: 6px 10px;
+      margin: 0;
+    }
+    .task-competition-bar .competitor-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 8px 12px;
+      min-width: 110px;
+      flex: 0 1 auto;
     }
     .task-left {
       padding: 24px 26px;
       display: grid;
       gap: 16px;
       align-content: start;
-      border-right: 1px solid #e2e8f0;
     }
     .task-right {
-      background: #f1f5f9;
-      padding: 20px 18px;
-      display: grid;
-      gap: 14px;
-      align-content: start;
-    }
-    .task-right h3 {
-      margin: 0;
-      font-size: .85rem;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: #64748b;
+      display: none;
     }
 
     /* ── STATUS ROW ─────────────────────────────────────────── */
@@ -465,11 +477,19 @@
         grid-template-columns: 1fr;
         min-height: auto;
       }
-      .task-left {
-        padding: 14px 12px;
+      .task-competition-bar {
+        padding: 10px 12px;
+        gap: 8px;
       }
-      .task-right {
-        border-top: 1px solid #e2e8f0;
+      .task-competition-bar .rank-banner {
+        font-size: .75rem;
+        padding: 4px 8px;
+      }
+      .task-competition-bar .competitor-card {
+        min-width: 90px;
+        padding: 6px 10px;
+      }
+      .task-left {
         padding: 14px 12px;
       }
       .status-item {
@@ -550,7 +570,36 @@
   <!-- ═══ TASK PANEL ═══════════════════════════════════════════ -->
   <div id="taskPanel" class="hidden">
 
-    <!-- LEFT: participant -->
+    <!-- COMPETITION BAR: top horizontal score display -->
+    <div class="task-competition-bar">
+      <div class="rank-banner" id="rankBanner" style="min-width: auto;">Rank — / 3</div>
+      
+      <div class="competitor-card">
+        <div style="font-size: .7rem; color: #64748b; margin-bottom: 4px;">Emma</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          <div style="font-size: 1.1rem; font-weight: 800; color: #2563eb;" id="compScore0">0</div>
+          <div style="font-size: .65rem; color: #64748b;" id="compQ0">0 ans</div>
+        </div>
+      </div>
+
+      <div class="competitor-card">
+        <div style="font-size: .7rem; color: #64748b; margin-bottom: 4px;">James</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          <div style="font-size: 1.1rem; font-weight: 800; color: #2563eb;" id="compScore1">0</div>
+          <div style="font-size: .65rem; color: #64748b;" id="compQ1">0 ans</div>
+        </div>
+      </div>
+
+      <div class="competitor-card" style="background: #fff9e6; border: 1px solid #fcd34d;">
+        <div style="font-size: .7rem; color: #64748b; margin-bottom: 4px;">You</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          <div style="font-size: 1.1rem; font-weight: 800; color: #2563eb;" id="yourScoreSidebar">0</div>
+          <div style="font-size: .65rem; color: #64748b;" id="yourAnsweredSidebar">0 ans</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEFT: participant task area -->
     <div class="task-left">
 
       <!-- top status row -->
@@ -589,68 +638,10 @@
       <!-- answer input -->
       <div class="field">
         <label for="answerInput">Your answer</label>
-        <input id="answerInput" type="text" placeholder="Type answer and press Enter" autocomplete="off" />
+        <input id="answerInput" type="text" placeholder="Type answer and press Enter" autocomplete="off" inputmode="decimal" />
       </div>
       <button id="submitButton" class="secondary" type="button">Submit answer</button>
 
-    </div>
-
-    <!-- RIGHT: competitors + rank -->
-    <div class="task-right">
-      <h3>Live Competition</h3>
-
-      <!-- rank banner -->
-      <div class="rank-banner" id="rankBanner">Rank — / 3</div>
-
-      <!-- competitor 1 -->
-      <div class="competitor-card" id="compCard0">
-        <div class="comp-header">
-          <div class="comp-avatar a">E</div>
-          <div>
-            <div class="comp-name">Emma</div>
-            <div class="comp-status" id="compStatus0">Waiting…</div>
-          </div>
-        </div>
-        <div class="comp-score-row">
-          <div class="comp-score" id="compScore0">0</div>
-          <div class="comp-q" id="compQ0">0 answered</div>
-        </div>
-      </div>
-
-      <!-- competitor 2 -->
-      <div class="competitor-card" id="compCard1">
-        <div class="comp-header">
-          <div class="comp-avatar b">J</div>
-          <div>
-            <div class="comp-name">James</div>
-            <div class="comp-status" id="compStatus1">Waiting…</div>
-          </div>
-        </div>
-        <div class="comp-score-row">
-          <div class="comp-score" id="compScore1">0</div>
-          <div class="comp-q" id="compQ1">0 answered</div>
-        </div>
-      </div>
-
-      <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e2e8f0;">
-        <div class="competitor-card" style="background:#fff9e6;">
-          <div class="comp-header">
-            <div class="comp-avatar" style="background: #2563eb;">Y</div>
-            <div>
-              <div class="comp-name">You</div>
-              <div class="comp-status">Live</div>
-            </div>
-          </div>
-          <div class="comp-score-row">
-            <div class="comp-score" id="yourScoreSidebar">0</div>
-            <div class="comp-q" id="yourAnsweredSidebar">0 answered</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="footer-note" style="font-size:.78rem; line-height:1.5">
-        🔴 Live — session monitored by researcher
-      </div>
     </div>
   </div>
 
@@ -1099,7 +1090,7 @@
     scoreDisplay.textContent = playerScore;
     scoreDisplay.style.color = playerScore < 0 ? '#dc2626' : playerScore === 0 ? '#64748b' : '#2563eb';
     yourScoreSidebar.textContent = playerScore;
-    yourAnsweredSidebar.textContent = attempted + ' answered';
+    yourAnsweredSidebar.textContent = attempted + ' ans';
     updateRankBanner();
   }
 
@@ -1109,7 +1100,7 @@
   }
   function updateBotUI(idx) {
     document.getElementById('compScore'+idx).textContent = botState[idx].score;
-    document.getElementById('compQ'+idx).textContent = botState[idx].answered+' answered';
+    document.getElementById('compQ'+idx).textContent = botState[idx].answered+' ans';
   }
   function scheduleBotAnswer(idx) {
     const bot = bots[idx];
