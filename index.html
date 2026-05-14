@@ -151,7 +151,7 @@
     #taskPanel {
       display: grid;
       grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr;
+      grid-template-rows: auto 1fr auto;
       gap: 0;
       min-height: 580px;
     }
@@ -165,10 +165,24 @@
       flex-wrap: wrap;
       justify-content: center;
     }
+    .task-rank-footer {
+      background: #f1f5f9;
+      border-top: 1px solid #e2e8f0;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .task-rank-footer .rank-banner {
+      margin: 0;
+      font-size: .8rem;
+      padding: 6px 10px;
+    }
     .task-competition-bar .rank-banner {
       font-size: .8rem;
       padding: 6px 10px;
       margin: 0;
+      display: none;
     }
     .task-competition-bar .competitor-card {
       background: #fff;
@@ -489,6 +503,13 @@
         min-width: 90px;
         padding: 6px 10px;
       }
+      .task-rank-footer {
+        padding: 10px 12px;
+      }
+      .task-rank-footer .rank-banner {
+        font-size: .75rem;
+        padding: 4px 8px;
+      }
       .task-left {
         padding: 14px 12px;
       }
@@ -572,8 +593,6 @@
 
     <!-- COMPETITION BAR: top horizontal score display -->
     <div class="task-competition-bar">
-      <div class="rank-banner" id="rankBanner" style="min-width: auto;">Rank — / 3</div>
-      
       <div class="competitor-card">
         <div style="font-size: .7rem; color: #64748b; margin-bottom: 4px;">Emma</div>
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
@@ -643,6 +662,11 @@
       <button id="submitButton" class="secondary" type="button">Submit answer</button>
 
     </div>
+
+    <!-- RANK FOOTER: bottom rank display -->
+    <div class="task-rank-footer">
+      <div class="rank-banner" id="rankBanner">Rank — / 3</div>
+    </div>
   </div>
 
   <!-- ═══ END PANEL ════════════════════════════════════════════ -->
@@ -677,8 +701,7 @@
     {question:'1,4 + 2,5',answer:3.9},{question:'96 x 0,5',answer:48},{question:'5090 + 2600',answer:7690},
     {question:'452,4 : 100',answer:4.524},{question:'0,4 x 9',answer:3.6},{question:'2273 x 4',answer:9092},
     {question:'|2-7|',answer:5},{question:'360 : 4',answer:90},{question:'628 - 298',answer:330},
-    {question:'100 + 24352',answer:24452},{question:'42 : 6',answer:7},{question:'(-12) + 4',answer:-8},
-    {question:'6 + (-10)',answer:-4},{question:'16 + (-16)',answer:0},{question:'45 + 4 + 17',answer:66},
+    {question:'100 + 24352',answer:24452},{question:'42 : 6',answer:7},{question:'45 + 4 + 17',answer:66},
     {question:'36785 - 150',answer:36635},{question:'3 + 138 + 42',answer:183},{question:'85 - 8 + 25',answer:102},
     {question:'195 + 234',answer:429},{question:'724 - 50 + 73',answer:747},{question:'823 - 234',answer:589},
     {question:'1003 - 7 - 14',answer:982},{question:'93 + 5 + 152',answer:250},{question:'736 - 82',answer:654},
@@ -712,8 +735,7 @@
     {question:'2,4 + 3,5',answer:5.9},{question:'84 x 0,5',answer:42},{question:'4090 + 1600',answer:5690},
     {question:'552,4 : 100',answer:5.524},{question:'0,4 x 8',answer:3.2},{question:'3372 x 4',answer:13488},
     {question:'|3 - 8|',answer:5},{question:'540 : 6',answer:90},{question:'728 - 198',answer:530},
-    {question:'100 + 32431',answer:32531},{question:'48 : 6',answer:8},{question:'(-12) + 5',answer:-7},
-    {question:'7 + (-10)',answer:-3},{question:'19 + (-19)',answer:0},{question:'46 + 5 + 18',answer:69},
+    {question:'100 + 32431',answer:32531},{question:'48 : 6',answer:8},{question:'46 + 5 + 18',answer:69},
     {question:'42757 - 250',answer:42507},{question:'3 + 127 + 44',answer:174},
     {question:'75 - 7 + 35',answer:103},{question:'283 + 346',answer:629},
     {question:'725 - 51 + 74',answer:748},{question:'824 - 235',answer:589},
@@ -737,12 +759,12 @@
   ];
 
   const textQuestions = [
-    {question:'Which ocean goes to the deepest depths?  A) Pacific  B) Arctic  C) Atlantic  D) Indian  E) Southern', answer:'A', accepted:['A','PACIFIC'], qType:'text'},
-    {question:'Which planet is known as the Red Planet?  A) Neptune  B) Jupiter  C) Mars  D) Mercury  E) Earth', answer:'C', accepted:['C','MARS'], qType:'text'},
-    {question:'What is the capital of the United States?  A) Washington, DC  B) New York City  C) Los Angeles  D) Chicago  E) Boston', answer:'A', accepted:['A','WASHINGTON','WASHINGTON DC'], qType:'text'},
-    {question:'Who is the founder of Microsoft?  A) Donald Trump  B) Bill Gates  C) Mark Zuckerberg  D) Steve Jobs  E) Elon Musk', answer:'B', accepted:['B','BILL GATES'], qType:'text'},
-    {question:'Which country is home to the kangaroo?  A) Australia  B) Congo  C) Angola  D) Zambia  E) New Zealand', answer:'A', accepted:['A','AUSTRALIA'], qType:'text'},
-    {question:'Who invented the telephone?  A) Thomas Edison  B) Wright Brothers  C) Guglielmo Marconi  D) Leonardo da Vinci  E) Alexander Graham Bell', answer:'E', accepted:['E','ALEXANDER GRAHAM BELL','GRAHAM BELL'], qType:'text'}
+    {question:'Which ocean goes to the deepest depths?  1) Pacific  2) Arctic  3) Atlantic  4) Indian  5) Southern', answer:'1', accepted:['1','PACIFIC'], qType:'text'},
+    {question:'Which planet is known as the Red Planet?  1) Neptune  2) Jupiter  3) Mars  4) Mercury  5) Earth', answer:'3', accepted:['3','MARS'], qType:'text'},
+    {question:'What is the capital of the United States?  1) Washington, DC  2) New York City  3) Los Angeles  4) Chicago  5) Boston', answer:'1', accepted:['1','WASHINGTON','WASHINGTON DC'], qType:'text'},
+    {question:'Who is the founder of Microsoft?  1) Donald Trump  2) Bill Gates  3) Mark Zuckerberg  4) Steve Jobs  5) Elon Musk', answer:'2', accepted:['2','BILL GATES'], qType:'text'},
+    {question:'Which country is home to the kangaroo?  1) Australia  2) Congo  3) Angola  4) Zambia  5) New Zealand', answer:'1', accepted:['1','AUSTRALIA'], qType:'text'},
+    {question:'Who invented the telephone?  1) Thomas Edison  2) Wright Brothers  3) Guglielmo Marconi  4) Leonardo da Vinci  5) Alexander Graham Bell', answer:'5', accepted:['5','ALEXANDER GRAHAM BELL','GRAHAM BELL'], qType:'text'}
   ];
 
   /* ─── BOT PROFILES ─────────────────────────────────────────── */
