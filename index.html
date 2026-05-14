@@ -491,6 +491,18 @@
       select, input[type="text"], button {
         min-height: 48px;
       }
+      .status-row {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 8px 0;
+        margin: -14px -12px 14px -12px;
+        padding-left: 12px;
+        padding-right: 12px;
+        z-index: 99;
+        gap: 6px;
+      }
     }
   </style>
 </head>
@@ -620,6 +632,22 @@
         </div>
       </div>
 
+      <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e2e8f0;">
+        <div class="competitor-card" style="background:#fff9e6;">
+          <div class="comp-header">
+            <div class="comp-avatar" style="background: #2563eb;">Y</div>
+            <div>
+              <div class="comp-name">You</div>
+              <div class="comp-status">Live</div>
+            </div>
+          </div>
+          <div class="comp-score-row">
+            <div class="comp-score" id="yourScoreSidebar">0</div>
+            <div class="comp-q" id="yourAnsweredSidebar">0 answered</div>
+          </div>
+        </div>
+      </div>
+
       <div class="footer-note" style="font-size:.78rem; line-height:1.5">
         🔴 Live — session monitored by researcher
       </div>
@@ -739,6 +767,8 @@
   const endPanel            = document.getElementById('endPanel');
   const startButton         = document.getElementById('startButton');
   const timerDisplay        = document.getElementById('timerDisplay');
+  const yourScoreSidebar    = document.getElementById('yourScoreSidebar');
+  const yourAnsweredSidebar = document.getElementById('yourAnsweredSidebar');
   const questionText        = document.getElementById('questionText');
   const answerInput         = document.getElementById('answerInput');
   const submitButton        = document.getElementById('submitButton');
@@ -962,7 +992,7 @@
     if (!AudioCtx) return;
     audioContext = new AudioCtx();
     masterGain = audioContext.createGain();
-    masterGain.gain.value = 0.45;
+    masterGain.gain.value = 0.85;
     masterGain.connect(audioContext.destination);
   }
 
@@ -1003,15 +1033,15 @@
 
   function playTimerTick(secondLeft) {
     if (secondLeft <= 2) {
-      playTone(1200, 0.1, 'square', 0.26);
+      playTone(1200, 0.1, 'square', 0.35);
     } else {
-      playTone(950, 0.08, 'square', 0.2);
+      playTone(950, 0.08, 'square', 0.28);
     }
   }
 
   function playTimeUpTone() {
-    playTone(560, 0.15, 'sawtooth', 0.28);
-    setTimeout(() => playTone(420, 0.2, 'sawtooth', 0.28), 90);
+    playTone(560, 0.15, 'sawtooth', 0.38);
+    setTimeout(() => playTone(420, 0.2, 'sawtooth', 0.38), 90);
   }
 
   function parseUserAnswer(text) {
@@ -1068,6 +1098,8 @@
   function updateScoreDisplay() {
     scoreDisplay.textContent = playerScore;
     scoreDisplay.style.color = playerScore < 0 ? '#dc2626' : playerScore === 0 ? '#64748b' : '#2563eb';
+    yourScoreSidebar.textContent = playerScore;
+    yourAnsweredSidebar.textContent = attempted + ' answered';
     updateRankBanner();
   }
 
