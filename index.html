@@ -849,7 +849,6 @@
     DOM.answerInput.value = '';
     DOM.answerInput.disabled = false;
     DOM.submitButton.disabled = false;
-    DOM.answerInput.focus();
     DOM.questionCount.textContent = `${state.attempted+1}/${state.currentBank.length}`;
     DOM.feedbackText.textContent = '';
     DOM.feedbackText.className = 'feedback';
@@ -858,6 +857,15 @@
     DOM.questionTimerFill.style.width = '100%';
     startQuestionTimer();
     botState.forEach((_, i) => scheduleBotAnswer(i));
+    
+    // Aggressive keyboard trigger: focus multiple times with RAF for reliability
+    DOM.answerInput.focus();
+    requestAnimationFrame(() => {
+      DOM.answerInput.focus();
+      requestAnimationFrame(() => {
+        DOM.answerInput.focus();
+      });
+    });
   }
 
   function submitAnswer() {
@@ -1007,32 +1015,38 @@
   });
   DOM.submitButton.addEventListener('click', submitAnswer);
 
-  // Keep focus on input to maintain keyboard visibility on mobile
+  // Keep keyboard visible: aggressive refocus on blur with multiple attempts
   DOM.answerInput.addEventListener('blur', (e) => {
     if (state.running && state.awaitingAnswer) {
-      setTimeout(() => DOM.answerInput.focus(), 5);
+      DOM.answerInput.focus();
+      setTimeout(() => DOM.answerInput.focus(), 2);
+      setTimeout(() => DOM.answerInput.focus(), 8);
     }
   });
 
-  // Aggressive keyboard persistence: prevent blur and keep refocusing
+  // Maintain keyboard on touchend
   DOM.answerInput.addEventListener('touchend', (e) => {
     if (state.running && state.awaitingAnswer) {
       setTimeout(() => DOM.answerInput.focus(), 10);
     }
   });
 
-  // Keep input focused when switching between input and button
+  // Submit button: call submit without preventing default to allow keyboard interaction
   DOM.submitButton.addEventListener('touchstart', (e) => {
     if (state.running && state.awaitingAnswer) {
-      e.preventDefault();
       submitAnswer();
+      // Keep focus on input after submit
+      setTimeout(() => DOM.answerInput.focus(), 50);
     }
   });
 
-  // Prevent focus loss on iOS
+  // Global blur prevention: keep input focused during test
   document.addEventListener('touchend', (e) => {
     if (state.running && state.awaitingAnswer && DOM.answerInput !== document.activeElement) {
-      setTimeout(() => DOM.answerInput.focus(), 10);
+      requestAnimationFrame(() => {
+        DOM.answerInput.focus();
+        requestAnimationFrame(() => DOM.answerInput.focus());
+      });
     }
   }, true);
 </script>
