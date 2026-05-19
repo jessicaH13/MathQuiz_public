@@ -541,7 +541,7 @@
       <div class="field">
         <label for="answerInput">Your answer</label>
         <div class="input-wrapper">
-          <input id="answerInput" type="text" placeholder="Type answer" autocomplete="off" inputmode="numeric" />
+          <input id="answerInput" type="text" placeholder="Type answer" autocomplete="off" inputmode="decimal" />
           <button id="submitButton" class="secondary" type="button">Submit</button>
         </div>
       </div>
@@ -1010,9 +1010,31 @@
   // Keep focus on input to maintain keyboard visibility on mobile
   DOM.answerInput.addEventListener('blur', (e) => {
     if (state.running && state.awaitingAnswer) {
+      setTimeout(() => DOM.answerInput.focus(), 5);
+    }
+  });
+
+  // Aggressive keyboard persistence: prevent blur and keep refocusing
+  DOM.answerInput.addEventListener('touchend', (e) => {
+    if (state.running && state.awaitingAnswer) {
       setTimeout(() => DOM.answerInput.focus(), 10);
     }
   });
+
+  // Keep input focused when switching between input and button
+  DOM.submitButton.addEventListener('touchstart', (e) => {
+    if (state.running && state.awaitingAnswer) {
+      e.preventDefault();
+      submitAnswer();
+    }
+  });
+
+  // Prevent focus loss on iOS
+  document.addEventListener('touchend', (e) => {
+    if (state.running && state.awaitingAnswer && DOM.answerInput !== document.activeElement) {
+      setTimeout(() => DOM.answerInput.focus(), 10);
+    }
+  }, true);
 </script>
 </body>
 </html>
