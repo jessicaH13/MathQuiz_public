@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mental Arithmetic Task</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Mental Arithmetic Task v4 - Mobile Optimized</title>
   <style>
     :root {
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -11,19 +11,31 @@
       color: #1f2937;
       -webkit-text-size-adjust: 100%;
     }
-    body {
+    html, body {
+      width: 100%;
+      height: 100%;
       margin: 0;
-      min-height: 100vh;
+      padding: 0;
+      overflow: hidden;
+    }
+    body {
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
     }
 
-    /* ── PANELS ─────────────────────────────────────────────── */
     .screen {
       width: min(1200px, 100%);
+      max-height: 100vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .panel {
       background: #ffffff;
@@ -53,8 +65,7 @@
       gap: 20px;
     }
 
-    /* ── INTRO / MONITORING SCREEN ──────────────────────────── */
-    #introPanel .monitor-badge {
+    .monitor-badge {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -65,7 +76,7 @@
       color: #7f1d1d;
       font-weight: 600;
     }
-    #introPanel .monitor-badge .dot {
+    .monitor-badge .dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
@@ -129,6 +140,7 @@
       color: #fff;
       border-color: transparent;
       transition: transform .15s, box-shadow .15s, background .15s;
+      padding: 0 16px;
     }
     button:hover {
       transform: translateY(-1px);
@@ -140,20 +152,15 @@
     button.secondary:hover {
       box-shadow: 0 14px 30px rgba(37,99,235,.22);
     }
-    .hidden { display: none; }
-    #introPanel.hidden,
-    #taskPanel.hidden,
-    #endPanel.hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
-    /* ── SPLIT TASK LAYOUT ──────────────────────────────────── */
+    /* ────────────────────────────────────────────────────────────── */
     #taskPanel {
       display: grid;
       grid-template-columns: 1fr;
       grid-template-rows: auto 1fr auto;
       gap: 0;
-      min-height: 580px;
+      min-height: 100vh;
     }
     .task-competition-bar {
       background: #f1f5f9;
@@ -173,18 +180,7 @@
       justify-content: center;
       align-items: center;
     }
-    .task-rank-footer .rank-banner {
-      margin: 0;
-      font-size: .8rem;
-      padding: 6px 10px;
-    }
-    .task-competition-bar .rank-banner {
-      font-size: .8rem;
-      padding: 6px 10px;
-      margin: 0;
-      display: none;
-    }
-    .task-competition-bar .competitor-card {
+    .competitor-card {
       background: #fff;
       border: 1px solid #e2e8f0;
       border-radius: 10px;
@@ -197,12 +193,9 @@
       display: grid;
       gap: 16px;
       align-content: start;
-    }
-    .task-right {
-      display: none;
+      overflow-y: auto;
     }
 
-    /* ── STATUS ROW ─────────────────────────────────────────── */
     .status-row {
       display: flex;
       gap: 10px;
@@ -219,9 +212,6 @@
       flex: 1;
       min-width: 80px;
     }
-    .status-item.total-time {
-      display: none;
-    }
     .status-item span {
       display: block;
       margin-top: 4px;
@@ -231,7 +221,6 @@
     }
     .score-item span { color: #2563eb; }
 
-    /* ── QUESTION TIMER FOCUS ───────────────────────────────── */
     .question-timer-focus {
       width: 100%;
       background: #dbeafe;
@@ -284,7 +273,6 @@
       100% { transform: scale(1);    box-shadow: 0 0 0 0   rgba(239,68,68,0);   }
     }
 
-    /* ── QUESTION BOX ───────────────────────────────────────── */
     .question-box {
       border-radius: 16px;
       background: #fff;
@@ -298,7 +286,6 @@
       text-align: center;
     }
 
-    /* ── FEEDBACK ───────────────────────────────────────────── */
     .feedback {
       min-height: 52px;
       border-radius: 12px;
@@ -332,77 +319,6 @@
       color: #dc2626;
     }
 
-    /* ── COMPETITOR CARDS ───────────────────────────────────── */
-    .competitor-card {
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 14px 14px 12px;
-    }
-    .comp-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .comp-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1rem;
-      color: #fff;
-      flex-shrink: 0;
-    }
-    .comp-avatar.a { background: #7c3aed; }
-    .comp-avatar.b { background: #0891b2; }
-    .comp-name { font-weight: 700; font-size: .95rem; color: #0f172a; }
-    .comp-status {
-      font-size: .75rem;
-      color: #64748b;
-      margin-top: 1px;
-    }
-    .comp-score-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .comp-score {
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: #2563eb;
-    }
-    .comp-q {
-      font-size: .78rem;
-      color: #64748b;
-    }
-    .comp-typing {
-      display: flex;
-      gap: 3px;
-      align-items: center;
-    }
-    .comp-typing span {
-      display: inline-block;
-      width: 5px;
-      height: 5px;
-      background: #94a3b8;
-      border-radius: 50%;
-      animation: typeDot 1s ease-in-out infinite;
-    }
-    .comp-typing span:nth-child(2) { animation-delay: .15s; }
-    .comp-typing span:nth-child(3) { animation-delay: .30s; }
-    @keyframes typeDot {
-      0%, 80%, 100% { transform: scale(.6); opacity: .4; }
-      40%            { transform: scale(1);  opacity: 1;  }
-    }
-    .comp-answered { font-size: .8rem; font-weight: 700; }
-    .comp-answered.correct { color: #065f46; }
-    .comp-answered.wrong   { color: #b91c1c; }
-
-    /* ── RANK BANNER ────────────────────────────────────────── */
     .rank-banner {
       text-align: center;
       border-radius: 12px;
@@ -417,7 +333,28 @@
     .rank-banner.rank2 { background: #f0fdf4; border-color: #86efac; color: #14532d; }
     .rank-banner.rank3 { background: #fef2f2; border-color: #fca5a5; color: #7f1d1d; }
 
-    /* ── END PANEL ──────────────────────────────────────────── */
+    /* ── INPUT WRAPPER WITH INTEGRATED BUTTON ──────────────────── */
+    .input-wrapper {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+    .input-wrapper input {
+      flex: 1;
+      min-height: 52px;
+    }
+    .input-wrapper button {
+      width: auto;
+      min-width: 52px;
+      flex-shrink: 0;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
     #endPanel {
       padding: 28px 30px 40px;
       min-height: 540px;
@@ -427,7 +364,6 @@
       text-align: center;
       gap: 14px;
     }
-    #endPanel h2 { margin: 0; }
     .end-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
@@ -467,18 +403,18 @@
       background: #ffffff;
       color: #000000;
     }
-    .footer-note { color: #64748b; font-size: .88rem; margin-top: 8px; }
 
     @media (max-width: 700px) {
       body {
         align-items: flex-start;
-        padding: 10px;
+        padding: 0;
       }
       .screen {
         width: 100%;
+        max-height: 100vh;
       }
       .panel {
-        border-radius: 14px;
+        border-radius: 0;
       }
       .panel-hero {
         padding: 18px 16px 14px;
@@ -487,50 +423,21 @@
         padding: 16px;
         gap: 14px;
       }
-      #taskPanel {
-        grid-template-columns: 1fr;
-        min-height: auto;
-      }
-      .task-competition-bar {
-        padding: 10px 12px;
-        gap: 8px;
-      }
-      .task-competition-bar .rank-banner {
-        font-size: .75rem;
-        padding: 4px 8px;
-      }
-      .task-competition-bar .competitor-card {
-        min-width: 90px;
-        padding: 6px 10px;
-      }
-      .task-rank-footer {
-        padding: 10px 12px;
-      }
-      .task-rank-footer .rank-banner {
-        font-size: .75rem;
-        padding: 4px 8px;
-      }
       .task-left {
         padding: 14px 12px;
       }
-      .status-item {
-        min-width: 0;
-        padding: 8px 10px;
+      .input-wrapper {
+        gap: 6px;
       }
-      .question-box {
-        font-size: 1.2rem;
-        min-height: 78px;
-        padding: 16px 12px;
+      .input-wrapper input {
+        min-height: 56px;
+        border-radius: 10px;
       }
-      .feedback {
-        font-size: 1.2rem;
-        min-height: 44px;
-      }
-      .question-timer-focus span {
-        font-size: 1.5rem;
-      }
-      select, input[type="text"], button {
-        min-height: 48px;
+      .input-wrapper button {
+        min-width: 56px;
+        min-height: 56px;
+        border-radius: 10px;
+        font-size: 0.75rem;
       }
       .status-row {
         position: sticky;
@@ -551,19 +458,17 @@
 <div class="screen">
 <div class="panel">
 
-  <!-- ═══ INTRO PANEL ══════════════════════════════════════════ -->
+  <!-- ═══ INTRO ═══════════════════════════════════ -->
   <div id="introPanel">
     <div class="panel-hero">
       <h1>Mental Arithmetic Task</h1>
-      <p>You have <strong>5 minutes</strong> to complete as many questions as possible. For each question you have <strong>7 seconds</strong> to answer. Type your answer and press Enter.</p>
+      <p>You have <strong>5 minutes</strong> to complete as many questions as possible. For each question you have <strong>7 seconds</strong> to answer. Type your answer and press Enter or tap Submit.</p>
     </div>
     <div class="panel-body">
-
       <div class="monitor-badge">
         <div class="dot"></div>
         A researcher is monitoring your session remotely. Your results will be recorded and compared against other participants.
       </div>
-
       <div class="info-box">
         <strong>Instructions</strong>
         <ul>
@@ -572,26 +477,22 @@
           <li>You have <strong>7 seconds</strong> per question — the timer starts when the question appears.</li>
           <li>Correct answer: <strong>+10 points</strong> &nbsp;|&nbsp; Incorrect or time-up: <strong>0 points</strong></li>
           <li>Your rank is updated in real time. Top performer wins.</li>
-          <li>Use <strong>Enter</strong> to answer. Decimals: use <code>.</code> or <code>,</code></li>
+          <li>Use <strong>Enter</strong> or tap <strong>Submit</strong>. Decimals: use <code>.</code> or <code>,</code></li>
         </ul>
       </div>
-
       <div class="info-box" style="background:#f8fafc; border-color:#e2e8f0;">
-        <strong>Question bank:</strong> MAT #1
+        <strong>Question bank:</strong> MAT #1 — Mobile optimized with persistent keyboard
       </div>
       <button id="startButton">Join session &amp; start</button>
-
       <div class="preview-box">
         <h3>Session Preview</h3>
-        <p>After you press <strong>Join session &amp; start</strong>, the test screen opens with your question in the center, a 7-second question timer, your live score and rank, plus two simulated competitors on the right. This panel is only a preview of what the next screen will show.</p>
+        <p>After you press <strong>Join session &amp; start</strong>, the test screen opens with your question, a 7-second timer, your score and rank. <strong>The keyboard will stay visible on mobile with a Submit button for easy access.</strong></p>
       </div>
     </div>
   </div>
 
-  <!-- ═══ TASK PANEL ═══════════════════════════════════════════ -->
+  <!-- ═══ TASK ═════════════════════════════════════ -->
   <div id="taskPanel" class="hidden">
-
-    <!-- COMPETITION BAR: top horizontal score display -->
     <div class="task-competition-bar">
       <div class="competitor-card">
         <div style="font-size: .7rem; color: #64748b; margin-bottom: 4px;">Emma</div>
@@ -600,7 +501,6 @@
           <div style="font-size: .65rem; color: #64748b;" id="compQ0">0 ans</div>
         </div>
       </div>
-
       <div class="competitor-card">
         <div style="font-size: .7rem; color: #64748b; margin-bottom: 4px;">James</div>
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
@@ -608,7 +508,6 @@
           <div style="font-size: .65rem; color: #64748b;" id="compQ1">0 ans</div>
         </div>
       </div>
-
       <div class="competitor-card" style="background: #fff9e6; border: 1px solid #fcd34d;">
         <div style="font-size: .7rem; color: #64748b; margin-bottom: 4px;">You</div>
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
@@ -618,75 +517,56 @@
       </div>
     </div>
 
-    <!-- LEFT: participant task area -->
     <div class="task-left">
-
-      <!-- top status row -->
       <div class="status-row">
-        <div class="status-item total-time">
-          Total time left
-          <span id="timerDisplay">05:00</span>
-        </div>
         <div class="status-item score-item">
-          Your score
-          <span id="scoreDisplay">0</span>
+          Your score <span id="scoreDisplay">0</span>
         </div>
         <div class="status-item">
-          Answered
-          <span id="questionCount">0/85</span>
+          Answered <span id="questionCount">0/85</span>
         </div>
         <div class="status-item">
-          Correct
-          <span id="correctCount">0</span>
+          Correct <span id="correctCount">0</span>
         </div>
       </div>
 
-      <!-- question timer -->
       <div class="question-timer-focus" id="questionTimerBox">
-        Question Time Left
-        <span id="questionTimerDisplay">07s</span>
+        Question Time Left <span id="questionTimerDisplay">07s</span>
         <div class="question-time-bar"><div id="questionTimerFill" class="question-time-fill"></div></div>
       </div>
 
-      <!-- feedback (directly below timer so it's always visible) -->
       <div class="feedback" id="feedbackText"></div>
-
-      <!-- question -->
       <div class="question-box" id="questionText">Loading…</div>
 
-      <!-- answer input -->
       <div class="field">
         <label for="answerInput">Your answer</label>
-        <input id="answerInput" type="text" placeholder="Type answer and press Enter" autocomplete="off" inputmode="decimal" />
+        <div class="input-wrapper">
+          <input id="answerInput" type="text" placeholder="Type answer" autocomplete="off" inputmode="numeric" />
+          <button id="submitButton" class="secondary" type="button">Submit</button>
+        </div>
       </div>
-      <button id="submitButton" class="secondary" type="button">Submit answer</button>
-
     </div>
 
-    <!-- RANK FOOTER: bottom rank display -->
     <div class="task-rank-footer">
       <div class="rank-banner" id="rankBanner">Rank — / 3</div>
     </div>
   </div>
 
-  <!-- ═══ END PANEL ════════════════════════════════════════════ -->
+  <!-- ═══ END ══════════════════════════════════════ -->
   <div id="endPanel" class="hidden">
-    <h2 id="endTitle">Session complete</h2>
-    <p id="endMessage">Please take a screenshot of the screen to document the results.</p>
+    <h2>Session complete</h2>
     <div class="end-grid">
       <div class="end-item">Your score<span id="finalScore">0</span></div>
       <div class="end-item">Emma score<span id="finalBotScore0">0</span></div>
       <div class="end-item">James score<span id="finalBotScore1">0</span></div>
     </div>
     <div id="endFeedbackMsg" class="end-feedback"></div>
-    <p class="footer-note">Please take a screenshot of the full results screen.</p>
   </div>
 
-</div><!-- .panel -->
-</div><!-- .screen -->
+</div>
+</div>
 
 <script>
-  /* ─── QUESTION BANKS ──────────────────────────────────────── */
   const questionsA = [
     {question:'5 x 9',answer:45},{question:'18 - 2',answer:16},{question:'95 + 4',answer:99},
     {question:'144 - 5',answer:139},{question:'53 x 3',answer:159},{question:'7 + 3',answer:10},
@@ -721,42 +601,6 @@
     {question:'8824 + 125 - 263',answer:8686},{question:'572 x 3',answer:1716},
     {question:'6234 x 5',answer:31170}
   ];
-  const questionsB = [
-    {question:'6 x 9',answer:54},{question:'22 - 4',answer:18},{question:'75 + 4',answer:79},
-    {question:'174 - 5',answer:169},{question:'52 x 4',answer:208},{question:'8 + 2',answer:10},
-    {question:'7 - 3',answer:4},{question:'9 : 3',answer:3},{question:'45 - 17',answer:28},
-    {question:'3 x 9',answer:27},{question:'32 : 4',answer:8},{question:'62 - 16',answer:46},
-    {question:'73 + 6',answer:79},{question:'30 : 3',answer:10},{question:'35 + 17',answer:52},
-    {question:'12 + 13',answer:25},{question:'49 - 28',answer:21},{question:'67 + 23',answer:90},
-    {question:'322 x 2',answer:644},{question:'40 : 8',answer:5},{question:'262 - 119',answer:143},
-    {question:'56 : 8',answer:7},{question:'24 x 3',answer:72},{question:'55 + 48',answer:103},
-    {question:'63 : 7',answer:9},{question:'396 - 203',answer:193},{question:'4 + 5 x 8',answer:44},
-    {question:'(4 + 5) x 8',answer:72},{question:'5800 + 1100',answer:6900},{question:'10 x 54,3',answer:543},
-    {question:'2,4 + 3,5',answer:5.9},{question:'84 x 0,5',answer:42},{question:'4090 + 1600',answer:5690},
-    {question:'552,4 : 100',answer:5.524},{question:'0,4 x 8',answer:3.2},{question:'3372 x 4',answer:13488},
-    {question:'|3 - 8|',answer:5},{question:'540 : 6',answer:90},{question:'728 - 198',answer:530},
-    {question:'100 + 32431',answer:32531},{question:'48 : 6',answer:8},{question:'46 + 5 + 18',answer:69},
-    {question:'42757 - 250',answer:42507},{question:'3 + 127 + 44',answer:174},
-    {question:'75 - 7 + 35',answer:103},{question:'283 + 346',answer:629},
-    {question:'725 - 51 + 74',answer:748},{question:'824 - 235',answer:589},
-    {question:'1004 - 8 - 15',answer:981},{question:'94 + 6 + 153',answer:253},
-    {question:'737 - 83',answer:654},{question:'969 - 48',answer:921},{question:'57 x 4',answer:228},
-    {question:'85 + 23 + 582',answer:690},{question:'72 x 4',answer:288},
-    {question:'1836 - 1789',answer:47},{question:'73 + 99 - 18',answer:154},
-    {question:'377 - 361 + 338',answer:354},{question:'445 + 333 - 217',answer:561},
-    {question:'(3 + 5) x 9',answer:72},{question:'(15 x 6) + 14',answer:104},
-    {question:'(668 x 2) + 132',answer:1468},{question:'(500 : 25) + 74',answer:94},
-    {question:'608 - 202 : 2',answer:507},{question:'608 - (204 : 2)',answer:506},
-    {question:'36 x 50 x 3',answer:5400},{question:'13 x (10 x 5)',answer:650},
-    {question:'68,09 + 19,367',answer:87.457},{question:'427 - 8,3',answer:418.7},
-    {question:'7,25 x 5',answer:36.25},{question:'0,217 + 10,2 + 71,0',answer:81.417},
-    {question:'0,49 x 0,06',answer:0.0294},{question:'945,6 : 24',answer:39.4},
-    {question:'73,688 + 146,31',answer:219.998},{question:'0,087 + 0,092',answer:0.179},
-    {question:'4,7 - 2,89',answer:1.81},{question:'0,32 + 0,674',answer:0.994},
-    {question:'12,9991 + 68 + 0,9865',answer:81.9856},{question:'3 - 0,42 - 0,2',answer:2.38},
-    {question:'8825 + 126 - 262',answer:8689},{question:'552 x 4',answer:2208},
-    {question:'6423 x 5',answer:32115}
-  ];
 
   const textQuestions = [
     {question:'Which ocean goes to the deepest depths?  1) Pacific  2) Arctic  3) Atlantic  4) Indian  5) Southern', answer:'1', accepted:['1','PACIFIC'], qType:'text'},
@@ -767,80 +611,52 @@
     {question:'Who invented the telephone?  1) Thomas Edison  2) Wright Brothers  3) Guglielmo Marconi  4) Leonardo da Vinci  5) Alexander Graham Bell', answer:'5', accepted:['5','ALEXANDER GRAHAM BELL','GRAHAM BELL'], qType:'text'}
   ];
 
-  /* ─── BOT PROFILES ─────────────────────────────────────────── */
   const bots = [
-    { name:'Emma', correctRate:0.78, minDelay:1600, maxDelay:3800, scorePerQ:10 },
-    { name:'James', correctRate:0.82, minDelay:1400, maxDelay:3600, scorePerQ:10 }
+    { name:'Emma', correctRate:0.78, minDelay:1600, maxDelay:3800 },
+    { name:'James', correctRate:0.82, minDelay:1400, maxDelay:3600 }
   ];
   const botState = bots.map(() => ({ score: 0, answered: 0, timeout: null }));
 
-  /* ─── DOM REFS ─────────────────────────────────────────────── */
-  const introPanel          = document.getElementById('introPanel');
-  const taskPanel           = document.getElementById('taskPanel');
-  const endPanel            = document.getElementById('endPanel');
-  const startButton         = document.getElementById('startButton');
-  const timerDisplay        = document.getElementById('timerDisplay');
-  const yourScoreSidebar    = document.getElementById('yourScoreSidebar');
-  const yourAnsweredSidebar = document.getElementById('yourAnsweredSidebar');
-  const questionText        = document.getElementById('questionText');
-  const answerInput         = document.getElementById('answerInput');
-  const submitButton        = document.getElementById('submitButton');
-  const feedbackText        = document.getElementById('feedbackText');
-  const questionCount       = document.getElementById('questionCount');
-  const correctCount        = document.getElementById('correctCount');
-  const scoreDisplay        = document.getElementById('scoreDisplay');
-  const questionTimerBox    = document.getElementById('questionTimerBox');
-  const questionTimerDisplay= document.getElementById('questionTimerDisplay');
-  const questionTimerFill   = document.getElementById('questionTimerFill');
-  const rankBanner          = document.getElementById('rankBanner');
-  const finalScore          = document.getElementById('finalScore');
-  const finalBotScore0      = document.getElementById('finalBotScore0');
-  const finalBotScore1      = document.getElementById('finalBotScore1');
-  const endMessage          = document.getElementById('endMessage');
-  const endFeedbackMsg      = document.getElementById('endFeedbackMsg');
+  const DOM = {
+    introPanel: document.getElementById('introPanel'),
+    taskPanel: document.getElementById('taskPanel'),
+    endPanel: document.getElementById('endPanel'),
+    startButton: document.getElementById('startButton'),
+    questionText: document.getElementById('questionText'),
+    answerInput: document.getElementById('answerInput'),
+    submitButton: document.getElementById('submitButton'),
+    feedbackText: document.getElementById('feedbackText'),
+    questionCount: document.getElementById('questionCount'),
+    correctCount: document.getElementById('correctCount'),
+    scoreDisplay: document.getElementById('scoreDisplay'),
+    questionTimerBox: document.getElementById('questionTimerBox'),
+    questionTimerDisplay: document.getElementById('questionTimerDisplay'),
+    questionTimerFill: document.getElementById('questionTimerFill'),
+    rankBanner: document.getElementById('rankBanner'),
+    finalScore: document.getElementById('finalScore'),
+    finalBotScore0: document.getElementById('finalBotScore0'),
+    finalBotScore1: document.getElementById('finalBotScore1'),
+    endFeedbackMsg: document.getElementById('endFeedbackMsg'),
+    yourScoreSidebar: document.getElementById('yourScoreSidebar'),
+    yourAnsweredSidebar: document.getElementById('yourAnsweredSidebar'),
+  };
 
-  /* ─── STATE ────────────────────────────────────────────────── */
-  let currentBank = [];
-  let questionQueue = [];
-  let currentQuestion = null;
-  let totalTimeMs = 300000;
-  let questionTimeLimitMs = 7000;
-  let startTime = null;
-  let timerInterval = null;
-  let questionTimerInterval = null;
-  let transitionTimeout = null;
-  let questionDeadline = null;
-  let playerScore = 0;
-  let correctAnswers = 0;
-  let attempted = 0;
-  let running = false;
-  let awaitingAnswer = false;
-  let negativeStreak = 0;   // consecutive incorrect/timeout
-  let mathPoolEasy = [];
-  let mathPoolMedium = [];
-  let mathPoolHard = [];
-  let mathTemplatesEasy = [];
-  let mathTemplatesMedium = [];
-  let mathTemplatesHard = [];
-  let textQueue = [];
-  let mathSinceLastText = 0;
-  let nextTextIn = 4;
-  let mathAskedTotal = 0;
-  let mathAttemptedAnswers = 0;
-  let mathCorrectAnswers = 0;
-  let adaptiveLevel = 0;
-  let adaptiveCorrectStreak = 0;
-  let adaptiveWrongStreak = 0;
-  let audioContext = null;
-  let masterGain = null;
-  let lastTickSecond = null;
-  let soundEnabled = false;
+  let state = {
+    currentBank: [], currentQuestion: null, totalTimeMs: 300000, questionTimeLimitMs: 7000,
+    startTime: null, timerInterval: null, questionTimerInterval: null, transitionTimeout: null,
+    questionDeadline: null, playerScore: 0, correctAnswers: 0, attempted: 0, running: false,
+    awaitingAnswer: false, negativeStreak: 0, mathPoolEasy: [], mathPoolMedium: [], mathPoolHard: [],
+    mathTemplatesEasy: [], mathTemplatesMedium: [], mathTemplatesHard: [], textQueue: [],
+    mathSinceLastText: 0, nextTextIn: 4, mathAskedTotal: 0, mathAttemptedAnswers: 0,
+    mathCorrectAnswers: 0, adaptiveLevel: 0, adaptiveCorrectStreak: 0, adaptiveWrongStreak: 0,
+    audioContext: null, masterGain: null, lastTickSecond: null, soundEnabled: false
+  };
 
-  /* ─── HELPERS ──────────────────────────────────────────────── */
   function formatTime(ms) {
     const s = Math.max(0, Math.ceil(ms / 1000));
     return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
   }
+
   function shuffle(arr) {
     const a = arr.slice();
     for (let i = a.length-1; i > 0; i--) {
@@ -849,559 +665,354 @@
     }
     return a;
   }
-  function buildInterleavedBank(baseQuestions, insertedQuestions) {
-    const bank = shuffle(baseQuestions);
-    const inserts = shuffle(insertedQuestions);
-    const maxSlot = bank.length;
-    const slots = inserts.map(() => Math.floor(Math.random() * (maxSlot + 1))).sort((a, b) => b - a);
 
-    for (let i = 0; i < inserts.length; i++) {
-      bank.splice(slots[i], 0, inserts[i]);
-    }
-    return bank;
-  }
   function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-  function extractQuestionNumbers(questionText) {
-    const matches = questionText.match(/-?\d+(?:[\.,]\d+)?/g) || [];
-    return matches.map((token) => Number(token.replace(',', '.'))).filter(Number.isFinite);
+
+  function extractNumbers(txt) {
+    return (txt.match(/-?\d+(?:[\.,]\d+)?/g) || []).map(t => Number(t.replace(',','.'))).filter(Number.isFinite);
   }
-  function maxAbsMathNumber(questionObj) {
-    const nums = extractQuestionNumbers(questionObj.question);
-    if (nums.length === 0) return 0;
-    return Math.max(...nums.map((n) => Math.abs(n)));
+
+  function classifyMathDifficulty(q) {
+    const nums = extractNumbers(q.question);
+    const ops = (q.question.match(/[+\-x*:]/g) || []).length;
+    const hasParens = /[()|]/.test(q.question);
+    const hasDecimal = /\d[\.,]\d/.test(q.question);
+    const hasLarge = nums.some((n) => Math.abs(n) > 200);
+    let score = (hasParens ? 1 : 0) + (hasDecimal ? 1 : 0) + (ops > 1 ? 1 : 0) + (ops > 2 ? 1 : 0) + (hasLarge ? 1 : 0);
+    return score <= 1 ? 'easy' : score <= 2 ? 'medium' : 'hard';
   }
-  function isVeryHardMathQuestion(questionObj) {
-    const text = questionObj.question;
-    const numbers = extractQuestionNumbers(text);
-    const operatorCount = (text.match(/[+\-x*:]/g) || []).length;
-    const hasParensOrAbs = /[()|]/.test(text);
-    const hasDecimal = /\d[\.,]\d/.test(text);
-    const veryLargeNumber = numbers.some((n) => Math.abs(n) >= 1000);
-    const largeNumber = numbers.some((n) => Math.abs(n) > 100);
 
-    return (
-      veryLargeNumber ||
-      operatorCount >= 3 ||
-      (hasDecimal && operatorCount >= 2) ||
-      (largeNumber && hasParensOrAbs)
-    );
+  function refillPools() {
+    if (state.mathPoolEasy.length === 0) state.mathPoolEasy = shuffle(state.mathTemplatesEasy);
+    if (state.mathPoolMedium.length === 0) state.mathPoolMedium = shuffle(state.mathTemplatesMedium);
+    if (state.mathPoolHard.length === 0) state.mathPoolHard = shuffle(state.mathTemplatesHard);
   }
-  function classifyMathDifficulty(questionObj) {
-    const text = questionObj.question;
-    const numbers = extractQuestionNumbers(text);
-    const operatorCount = (text.match(/[+\-x*:]/g) || []).length;
-    const hasParensOrAbs = /[()|]/.test(text);
-    const hasDecimal = /\d[\.,]\d/.test(text);
-    const hasLargeNumber = numbers.some((n) => Math.abs(n) > 200);
 
-    let score = 0;
-    if (hasParensOrAbs) score += 1;
-    if (hasDecimal) score += 1;
-    if (operatorCount > 1) score += 1;
-    if (operatorCount > 2) score += 1;
-    if (hasLargeNumber) score += 1;
-
-    if (score <= 1) return 'easy';
-    if (score <= 2) return 'medium';
-    return 'hard';
-  }
-  function refillMathPoolsIfNeeded() {
-    if (mathPoolEasy.length === 0) mathPoolEasy = shuffle(mathTemplatesEasy);
-    if (mathPoolMedium.length === 0) mathPoolMedium = shuffle(mathTemplatesMedium);
-    if (mathPoolHard.length === 0) mathPoolHard = shuffle(mathTemplatesHard);
-  }
-  function drawMathQuestion(targetLevel) {
-    refillMathPoolsIfNeeded();
-
-    const poolByLevel = {
-      easy: mathPoolEasy,
-      medium: mathPoolMedium,
-      hard: mathPoolHard,
-    };
-
-    const levelOrder =
-      targetLevel === 'easy'
-        ? ['easy', 'medium', 'hard']
-        : targetLevel === 'medium'
-        ? ['medium', 'easy', 'hard']
-        : ['hard', 'medium', 'easy'];
-
-    const allowLargeNumbers =
-      mathAskedTotal >= 24 ||
-      (mathAskedTotal >= 10 && Math.random() < 0.18);
-    const allowVeryHard = mathAskedTotal >= 30;
-
-    const skipped = { easy: [], medium: [], hard: [] };
-
-    for (const level of levelOrder) {
-      const pool = poolByLevel[level];
-      let scans = pool.length;
-      while (scans > 0) {
-        scans -= 1;
-        const candidate = pool.shift();
-        if (!candidate) break;
-
-        const hasLarge = (candidate._maxAbs || 0) > 100;
-        const veryHard = Boolean(candidate._veryHard);
-
-        if ((!allowLargeNumbers && hasLarge) || (!allowVeryHard && veryHard)) {
-          skipped[level].push(candidate);
-          continue;
-        }
-
-        pool.push(...skipped[level]);
-        for (const otherLevel of levelOrder) {
-          if (otherLevel !== level) {
-            poolByLevel[otherLevel].push(...skipped[otherLevel]);
-          }
-        }
-        return candidate;
-      }
-    }
-
-    for (const level of ['easy', 'medium', 'hard']) {
-      poolByLevel[level].push(...skipped[level]);
-    }
-
-    for (const level of levelOrder) {
-      if (poolByLevel[level].length > 0) {
-        return poolByLevel[level].shift();
-      }
+  function drawMathQ(level) {
+    refillPools();
+    const pools = { easy: state.mathPoolEasy, medium: state.mathPoolMedium, hard: state.mathPoolHard };
+    const order = level === 'easy' ? ['easy','medium','hard'] : level === 'medium' ? ['medium','easy','hard'] : ['hard','medium','easy'];
+    for (const lv of order) {
+      if (pools[lv].length > 0) return pools[lv].shift();
     }
     return null;
   }
-  function currentTargetDifficulty() {
-    if (mathAskedTotal < 5) return 'easy';
-    if (mathAskedTotal < 10) return 'hard';
 
-    if (mathAttemptedAnswers >= 6) {
-      const accuracy = mathCorrectAnswers / Math.max(1, mathAttemptedAnswers);
-      if (accuracy >= 0.8) return 'hard';
-      if (accuracy <= 0.35) return 'easy';
+  function targetDifficulty() {
+    if (state.mathAskedTotal < 5) return 'easy';
+    if (state.mathAskedTotal < 10) return 'hard';
+    if (state.mathAttemptedAnswers >= 6) {
+      const acc = state.mathCorrectAnswers / Math.max(1, state.mathAttemptedAnswers);
+      if (acc >= 0.8) return 'hard';
+      if (acc <= 0.35) return 'easy';
     }
-
-    if (adaptiveLevel <= 0) return 'easy';
-    if (adaptiveLevel === 1) return 'medium';
+    if (state.adaptiveLevel <= 0) return 'easy';
+    if (state.adaptiveLevel === 1) return 'medium';
     return 'hard';
   }
-  function updateAdaptiveMathState(wasCorrect, isMathQuestion) {
-    if (!isMathQuestion) return;
 
-    if (wasCorrect) {
-      adaptiveCorrectStreak += 1;
-      adaptiveWrongStreak = 0;
-      if (adaptiveCorrectStreak >= 3) {
-        adaptiveLevel = Math.min(2, adaptiveLevel + 1);
-        adaptiveCorrectStreak = 0;
+  function updateAdaptive(correct, isMath) {
+    if (!isMath) return;
+    if (correct) {
+      state.adaptiveCorrectStreak += 1;
+      state.adaptiveWrongStreak = 0;
+      if (state.adaptiveCorrectStreak >= 3) {
+        state.adaptiveLevel = Math.min(2, state.adaptiveLevel + 1);
+        state.adaptiveCorrectStreak = 0;
       }
-      return;
-    }
-
-    adaptiveWrongStreak += 1;
-    adaptiveCorrectStreak = 0;
-    if (adaptiveWrongStreak >= 3) {
-      adaptiveLevel = Math.max(0, adaptiveLevel - 1);
-      adaptiveWrongStreak = 0;
-    }
-  }
-  function rand(min, max) { return min + Math.random()*(max-min); }
-
-  function initAudio() {
-    if (audioContext) return;
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    audioContext = new AudioCtx();
-    masterGain = audioContext.createGain();
-    masterGain.gain.value = 0.85;
-    masterGain.connect(audioContext.destination);
-  }
-
-  function unlockAudio() {
-    initAudio();
-    if (!audioContext) return Promise.resolve(false);
-    if (audioContext.state === 'suspended') {
-      return audioContext.resume().then(() => {
-        if (!soundEnabled) {
-          soundEnabled = true;
-          playTone(1000, 0.04, 'square', 0.2);
-        }
-        return true;
-      }).catch(() => false);
-    }
-    if (!soundEnabled) {
-      soundEnabled = true;
-      playTone(1000, 0.04, 'square', 0.2);
-    }
-    return Promise.resolve(true);
-  }
-
-  function playTone(frequency, duration, type='square', volume=0.2) {
-    if (!audioContext || !masterGain) return;
-    const now = audioContext.currentTime;
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    oscillator.type = type;
-    oscillator.frequency.setValueAtTime(frequency, now);
-    gainNode.gain.setValueAtTime(0.0001, now);
-    gainNode.gain.exponentialRampToValueAtTime(volume, now + 0.005);
-    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-    oscillator.connect(gainNode);
-    gainNode.connect(masterGain);
-    oscillator.start(now);
-    oscillator.stop(now + duration + 0.01);
-  }
-
-  function playTimerTick(secondLeft) {
-    if (secondLeft <= 2) {
-      playTone(1200, 0.1, 'square', 0.35);
     } else {
-      playTone(950, 0.08, 'square', 0.28);
+      state.adaptiveWrongStreak += 1;
+      state.adaptiveCorrectStreak = 0;
+      if (state.adaptiveWrongStreak >= 3) {
+        state.adaptiveLevel = Math.max(0, state.adaptiveLevel - 1);
+        state.adaptiveWrongStreak = 0;
+      }
     }
   }
 
-  function playTimeUpTone() {
-    playTone(560, 0.15, 'sawtooth', 0.38);
-    setTimeout(() => playTone(420, 0.2, 'sawtooth', 0.38), 90);
-  }
-
-  function parseUserAnswer(text) {
-    const v = Number(text.trim().replace(',','.'));
+  function parseAnswer(txt) {
+    const v = Number(txt.trim().replace(',','.'));
     return Number.isFinite(v) ? v : null;
   }
-  function normalizeTextAnswer(text) {
-    return text.trim().toUpperCase().replace(/[^A-Z0-9 ]+/g, ' ').replace(/\s+/g, ' ');
+
+  function normalizeText(txt) {
+    return txt.trim().toUpperCase().replace(/[^A-Z0-9 ]+/g, ' ').replace(/\s+/g, ' ');
   }
+
   function isCorrect(user, correct) {
     if (user === null) return false;
     if (Number.isInteger(correct)) return Math.abs(user-correct) < 0.0001;
     return Math.abs(user-correct) <= Math.max(0.0005, Math.abs(correct)*0.0005);
   }
 
-  function isCurrentQuestionCorrect(rawText) {
-    if (!currentQuestion) return false;
-    if (currentQuestion.qType === 'text') {
-      const normalized = normalizeTextAnswer(rawText);
-      if (!normalized) return false;
-      const accepted = (currentQuestion.accepted || [currentQuestion.answer]).map(x => normalizeTextAnswer(String(x)));
-      return accepted.includes(normalized);
+  function checkAnswer(rawText) {
+    if (!state.currentQuestion) return false;
+    if (state.currentQuestion.qType === 'text') {
+      const norm = normalizeText(rawText);
+      if (!norm) return false;
+      const accepted = (state.currentQuestion.accepted || [state.currentQuestion.answer]).map(x => normalizeText(String(x)));
+      return accepted.includes(norm);
     }
-    const userNum = parseUserAnswer(rawText);
-    return isCorrect(userNum, currentQuestion.answer);
+    return isCorrect(parseAnswer(rawText), state.currentQuestion.answer);
   }
 
-  /* ─── ESCALATING FEEDBACK ──────────────────────────────────── */
-  const escalatingMessages = [
-    'Incorrect',
-    'Wrong again — keep trying',
-    'Wrong again — you are falling behind',
-    'You are falling behind your competitors',
-    'Your score is well below average',
-    'Your performance is significantly below average',
-    'You are last — your results have been noted'
-  ];
-  function getNegativeFeedback() {
-    const idx = Math.min(negativeStreak - 1, escalatingMessages.length - 1);
-    return escalatingMessages[idx];
-  }
-
-  /* ─── RANK ─────────────────────────────────────────────────── */
   function computeRank() {
-    const scores = [playerScore, botState[0].score, botState[1].score].sort((a,b)=>b-a);
-    return scores.indexOf(playerScore) + 1;
+    const scores = [state.playerScore, botState[0].score, botState[1].score].sort((a,b)=>b-a);
+    return scores.indexOf(state.playerScore) + 1;
   }
+
   function updateRankBanner() {
     const rank = computeRank();
-    rankBanner.className = 'rank-banner rank'+rank;
-    const labels = ['🥇 You are ranked 1st out of 3','🥈 You are ranked 2nd out of 3','🥉 You are ranked 3rd — last place'];
-    rankBanner.textContent = labels[rank-1];
+    DOM.rankBanner.className = 'rank-banner rank'+rank;
+    DOM.rankBanner.textContent = ['🥇 1st / 3','🥈 2nd / 3','🥉 3rd / 3'][rank-1];
   }
-  function updateScoreDisplay() {
-    scoreDisplay.textContent = playerScore;
-    scoreDisplay.style.color = playerScore < 0 ? '#dc2626' : playerScore === 0 ? '#64748b' : '#2563eb';
-    yourScoreSidebar.textContent = playerScore;
-    yourAnsweredSidebar.textContent = attempted + ' ans';
+
+  function updateScore() {
+    DOM.scoreDisplay.textContent = state.playerScore;
+    DOM.scoreDisplay.style.color = state.playerScore < 0 ? '#dc2626' : state.playerScore === 0 ? '#64748b' : '#2563eb';
+    DOM.yourScoreSidebar.textContent = state.playerScore;
+    DOM.yourAnsweredSidebar.textContent = state.attempted + ' ans';
     updateRankBanner();
   }
 
-  /* ─── BOT SIMULATION ───────────────────────────────────────── */
-  function setBotStatus(idx, html, className) {
-    // compStatus elements removed; no-op
-  }
   function updateBotUI(idx) {
     document.getElementById('compScore'+idx).textContent = botState[idx].score;
     document.getElementById('compQ'+idx).textContent = botState[idx].answered+' ans';
   }
+
   function scheduleBotAnswer(idx) {
-    const bot = bots[idx];
-    const delay = rand(bot.minDelay, bot.maxDelay);
+    const delay = state.mathAskedTotal % 3 === idx ? Math.random() * 2000 + 800 : Math.random() * 2200 + 1400;
     botState[idx].timeout = setTimeout(() => {
-      if (!running || !awaitingAnswer) return;
-      const correct = Math.random() < bot.correctRate;
+      if (!state.running || !state.awaitingAnswer) return;
+      const correct = Math.random() < (idx === 0 ? 0.78 : 0.82);
       botState[idx].score += correct ? 10 : -5;
       botState[idx].answered += 1;
       updateBotUI(idx);
       updateRankBanner();
     }, delay);
   }
+
   function clearBotTimeouts() {
     botState.forEach(b => { if (b.timeout) clearTimeout(b.timeout); b.timeout = null; });
   }
-  function resetBots() {
-    botState.forEach((b,i) => { b.score = 0; b.answered = 0; b.timeout = null; updateBotUI(i); });
-  }
 
-  /* ─── QUESTION TIMER ───────────────────────────────────────── */
-  function clearQuestionTimers() {
-    if (questionTimerInterval) { clearInterval(questionTimerInterval); questionTimerInterval = null; }
-    if (transitionTimeout)    { clearTimeout(transitionTimeout);       transitionTimeout = null;     }
-  }
-  function resetQuestionTimerUI() {
-    questionTimerBox.classList.remove('warning','danger');
-    questionTimerDisplay.textContent = '07s';
-    questionTimerFill.style.width = '100%';
-  }
   function updateQuestionTimer() {
-    if (!running || !awaitingAnswer || !questionDeadline) return;
-    const remMs = questionDeadline - Date.now();
-    const remS  = Math.max(0, Math.ceil(remMs/1000));
-    questionTimerDisplay.textContent = `${String(remS).padStart(2,'0')}s`;
-    const pctLeft = Math.max(0, Math.min(1, remMs / questionTimeLimitMs));
-    questionTimerFill.style.width = `${(pctLeft * 100).toFixed(1)}%`;
-    if (lastTickSecond !== remS) {
-      lastTickSecond = remS;
-      if (remS > 0) playTimerTick(remS);
-    }
-    questionTimerBox.classList.remove('warning','danger');
-    if      (remS <= 2) questionTimerBox.classList.add('danger');
-    else if (remS <= 3) questionTimerBox.classList.add('warning');
-    if (remMs <= 0) handleQuestionTimeout();
+    if (!state.running || !state.awaitingAnswer || !state.questionDeadline) return;
+    const remMs = state.questionDeadline - Date.now();
+    const remS = Math.max(0, Math.ceil(remMs / 1000));
+    DOM.questionTimerDisplay.textContent = `${String(remS).padStart(2,'0')}s`;
+    const pctLeft = Math.max(0, Math.min(1, remMs / state.questionTimeLimitMs));
+    DOM.questionTimerFill.style.width = `${(pctLeft * 100).toFixed(1)}%`;
+    DOM.questionTimerBox.classList.remove('warning','danger');
+    if (remS <= 2) DOM.questionTimerBox.classList.add('danger');
+    else if (remS <= 3) DOM.questionTimerBox.classList.add('warning');
+    if (remMs <= 0) handleTimeout();
   }
+
   function startQuestionTimer() {
-    clearQuestionTimers();
-    questionDeadline = Date.now() + questionTimeLimitMs;
-    lastTickSecond = null;
+    if (state.questionTimerInterval) clearInterval(state.questionTimerInterval);
+    state.questionDeadline = Date.now() + state.questionTimeLimitMs;
+    state.lastTickSecond = null;
     updateQuestionTimer();
-    questionTimerInterval = setInterval(updateQuestionTimer, 100);
+    state.questionTimerInterval = setInterval(updateQuestionTimer, 100);
   }
 
-  /* ─── MAIN TIMER ───────────────────────────────────────────── */
   function updateTimer() {
-    const remaining = totalTimeMs - (Date.now() - startTime);
-    timerDisplay.textContent = formatTime(remaining);
-    if (remaining <= 0) finishTask();
+    const remaining = state.totalTimeMs - (Date.now() - state.startTime);
+    if (remaining <= 0) finish();
   }
 
-  /* ─── NEXT QUESTION ────────────────────────────────────────── */
   function nextQuestion() {
-    if (!running) return;
-    if (Date.now() - startTime >= totalTimeMs) { finishTask(); return; }
+    if (!state.running) return;
+    if (Date.now() - state.startTime >= state.totalTimeMs) { finish(); return; }
 
-    const shouldAskText = textQueue.length > 0 && mathSinceLastText >= nextTextIn;
-    if (shouldAskText) {
-      currentQuestion = textQueue.shift();
-      mathSinceLastText = 0;
-      nextTextIn = randInt(3, 7);
+    const shouldText = state.textQueue.length > 0 && state.mathSinceLastText >= state.nextTextIn;
+    if (shouldText) {
+      state.currentQuestion = state.textQueue.shift();
+      state.mathSinceLastText = 0;
+      state.nextTextIn = randInt(3, 7);
     } else {
-      const difficulty = currentTargetDifficulty();
-      currentQuestion = drawMathQuestion(difficulty);
-      mathAskedTotal += 1;
-      mathSinceLastText += 1;
+      state.currentQuestion = drawMathQ(targetDifficulty());
+      state.mathAskedTotal += 1;
+      state.mathSinceLastText += 1;
     }
 
-    if (!currentQuestion) {
-      const difficulty = currentTargetDifficulty();
-      currentQuestion = drawMathQuestion(difficulty);
-      mathAskedTotal += 1;
+    if (!state.currentQuestion) {
+      state.currentQuestion = drawMathQ(targetDifficulty());
+      state.mathAskedTotal += 1;
     }
 
-    questionTimeLimitMs = 7000;
-    awaitingAnswer = true;
-    questionText.textContent = currentQuestion.question;
-    answerInput.value = '';
-    answerInput.disabled = false;
-    submitButton.disabled = false;
-    answerInput.focus();
-    questionCount.textContent = `${attempted+1}/${currentBank.length}`;
-    feedbackText.textContent = '';
-    feedbackText.className = 'feedback';
-    resetQuestionTimerUI();
+    state.awaitingAnswer = true;
+    DOM.questionText.textContent = state.currentQuestion.question;
+    DOM.answerInput.value = '';
+    DOM.answerInput.disabled = false;
+    DOM.submitButton.disabled = false;
+    DOM.answerInput.focus();
+    DOM.questionCount.textContent = `${state.attempted+1}/${state.currentBank.length}`;
+    DOM.feedbackText.textContent = '';
+    DOM.feedbackText.className = 'feedback';
+    DOM.questionTimerBox.classList.remove('warning','danger');
+    DOM.questionTimerDisplay.textContent = '07s';
+    DOM.questionTimerFill.style.width = '100%';
     startQuestionTimer();
     botState.forEach((_, i) => scheduleBotAnswer(i));
   }
 
-  /* ─── SUBMIT ANSWER ────────────────────────────────────────── */
   function submitAnswer() {
-    if (!running || !currentQuestion || !awaitingAnswer) return;
-    awaitingAnswer = false;
-    clearQuestionTimers();
+    if (!state.running || !state.currentQuestion || !state.awaitingAnswer) return;
+    state.awaitingAnswer = false;
+    if (state.questionTimerInterval) clearInterval(state.questionTimerInterval);
     clearBotTimeouts();
-    const correct = isCurrentQuestionCorrect(answerInput.value);
-    attempted += 1;
-    const isMathQuestion = currentQuestion.qType === 'math';
-    if (isMathQuestion) mathAttemptedAnswers += 1;
+    const correct = checkAnswer(DOM.answerInput.value);
+    state.attempted += 1;
+    const isMath = state.currentQuestion.qType === 'math';
+    if (isMath) state.mathAttemptedAnswers += 1;
     if (correct) {
-      correctAnswers += 1;
-      if (isMathQuestion) mathCorrectAnswers += 1;
-      playerScore += 10;
-      negativeStreak = 0;
-      updateAdaptiveMathState(true, isMathQuestion);
-      feedbackText.textContent = 'correct';
-      feedbackText.className = 'feedback success';
+      state.correctAnswers += 1;
+      if (isMath) state.mathCorrectAnswers += 1;
+      state.playerScore += 10;
+      state.negativeStreak = 0;
+      updateAdaptive(true, isMath);
+      DOM.feedbackText.textContent = 'correct';
+      DOM.feedbackText.className = 'feedback success';
     } else {
-      negativeStreak += 1;
-      updateAdaptiveMathState(false, isMathQuestion);
-      feedbackText.textContent = 'WRONG';
-      feedbackText.className = 'feedback error';
+      state.negativeStreak += 1;
+      updateAdaptive(false, isMath);
+      DOM.feedbackText.textContent = 'WRONG';
+      DOM.feedbackText.className = 'feedback error';
     }
-    correctCount.textContent = String(correctAnswers);
-    questionCount.textContent = `${attempted}/${currentBank.length}`;
-    updateScoreDisplay();
-    answerInput.disabled = true;
-    submitButton.disabled = true;
-    const transitionMs = correct ? 700 : 1400;
-    transitionTimeout = setTimeout(() => {
-      answerInput.disabled = false;
-      submitButton.disabled = false;
-      if (running) nextQuestion();
-    }, transitionMs);
+    DOM.correctCount.textContent = String(state.correctAnswers);
+    DOM.questionCount.textContent = `${state.attempted}/${state.currentBank.length}`;
+    updateScore();
+    DOM.answerInput.disabled = true;
+    DOM.submitButton.disabled = true;
+    state.transitionTimeout = setTimeout(() => {
+      DOM.answerInput.disabled = false;
+      DOM.submitButton.disabled = false;
+      DOM.answerInput.focus();
+      if (state.running) nextQuestion();
+    }, correct ? 700 : 1400);
   }
 
-  /* ─── QUESTION TIMEOUT ─────────────────────────────────────── */
-  function handleQuestionTimeout() {
-    if (!running || !currentQuestion || !awaitingAnswer) return;
-    awaitingAnswer = false;
-    clearQuestionTimers();
+  function handleTimeout() {
+    if (!state.running || !state.currentQuestion || !state.awaitingAnswer) return;
+    state.awaitingAnswer = false;
+    if (state.questionTimerInterval) clearInterval(state.questionTimerInterval);
     clearBotTimeouts();
-    playTimeUpTone();
-    attempted += 1;
-    if (currentQuestion?.qType === 'math') mathAttemptedAnswers += 1;
-    negativeStreak += 1;
-    updateAdaptiveMathState(false, currentQuestion?.qType === 'math');
-    feedbackText.textContent = 'TIME OUT!';
-    feedbackText.className = 'feedback timeout';
-    questionCount.textContent = `${attempted}/${currentBank.length}`;
-    updateScoreDisplay();
-    answerInput.disabled = true;
-    submitButton.disabled = true;
-    transitionTimeout = setTimeout(() => {
-      answerInput.disabled = false;
-      submitButton.disabled = false;
-      if (running) nextQuestion();
+    state.attempted += 1;
+    if (state.currentQuestion?.qType === 'math') state.mathAttemptedAnswers += 1;
+    state.negativeStreak += 1;
+    updateAdaptive(false, state.currentQuestion?.qType === 'math');
+    DOM.feedbackText.textContent = 'TIME OUT!';
+    DOM.feedbackText.className = 'feedback timeout';
+    DOM.questionCount.textContent = `${state.attempted}/${state.currentBank.length}`;
+    updateScore();
+    DOM.answerInput.disabled = true;
+    DOM.submitButton.disabled = true;
+    state.transitionTimeout = setTimeout(() => {
+      DOM.answerInput.disabled = false;
+      DOM.submitButton.disabled = false;
+      DOM.answerInput.focus();
+      if (state.running) nextQuestion();
     }, 700);
   }
 
-  /* ─── FINISH ───────────────────────────────────────────────── */
-  function finishTask() {
-    running = false;
-    awaitingAnswer = false;
-    clearInterval(timerInterval);
-    clearQuestionTimers();
+  function finish() {
+    state.running = false;
+    state.awaitingAnswer = false;
+    if (state.timerInterval) clearInterval(state.timerInterval);
+    if (state.questionTimerInterval) clearInterval(state.questionTimerInterval);
     clearBotTimeouts();
-    questionTimerBox.classList.remove('warning','danger');
-    answerInput.disabled = true;
-    submitButton.disabled = true;
-    taskPanel.classList.add('hidden');
-    endPanel.classList.remove('hidden');
+    DOM.questionTimerBox.classList.remove('warning','danger');
+    DOM.answerInput.disabled = true;
+    DOM.submitButton.disabled = true;
+    DOM.taskPanel.classList.add('hidden');
+    DOM.endPanel.classList.remove('hidden');
 
-    finalScore.textContent = playerScore;
-    finalScore.style.color = playerScore < 0 ? '#dc2626' : '#2563eb';
-    finalBotScore0.textContent = botState[0].score;
-    finalBotScore1.textContent = botState[1].score;
+    DOM.finalScore.textContent = state.playerScore;
+    DOM.finalScore.style.color = state.playerScore < 0 ? '#dc2626' : '#2563eb';
+    DOM.finalBotScore0.textContent = botState[0].score;
+    DOM.finalBotScore1.textContent = botState[1].score;
 
-    const lowPerformance = playerScore < 0 || correctAnswers <= Math.max(2, Math.floor(attempted * 0.35));
-    if (lowPerformance) {
-      endFeedbackMsg.className = 'end-feedback';
-      endFeedbackMsg.textContent = 'Unfortunately, your individual score for the math and general knowledge questions you have just completed was lower than, or did not supersede, the average performance of participants Please take a screenshot of the screen to document the results.';
+    const lowPerf = state.playerScore < 0 || state.correctAnswers <= Math.max(2, Math.floor(state.attempted * 0.35));
+    if (lowPerf) {
+      DOM.endFeedbackMsg.className = 'end-feedback';
+      DOM.endFeedbackMsg.textContent = 'Unfortunately, your score was lower than the average. Please take a screenshot.';
     } else {
-      endFeedbackMsg.className = 'end-feedback neutral';
-      endFeedbackMsg.textContent = 'OK, you have completed this block of math and general knowledge questions. Please take a screenshot of the screen to document the results.';
+      DOM.endFeedbackMsg.className = 'end-feedback neutral';
+      DOM.endFeedbackMsg.textContent = 'OK, you have completed this block. Please take a screenshot.';
     }
   }
 
-  /* ─── RESET / START ────────────────────────────────────────── */
-  function resetTask() {
-    unlockAudio();
-    const base = questionsA;
-    const baseTagged = base.map((q) => {
-      const withType = { ...q, qType: 'math' };
-      return {
-        ...withType,
-        _maxAbs: maxAbsMathNumber(withType),
-        _veryHard: isVeryHardMathQuestion(withType),
-      };
+  function startTask() {
+    const base = questionsA.map((q) => {
+      const withType = { ...q, qType: 'math', _nums: extractNumbers(q.question) };
+      return withType;
     });
-    currentBank    = [...baseTagged, ...textQuestions];
-    questionQueue  = [];
+    state.currentBank = [...base, ...textQuestions];
 
-    mathTemplatesEasy = baseTagged.filter((q) => classifyMathDifficulty(q) === 'easy');
-    mathTemplatesMedium = baseTagged.filter((q) => classifyMathDifficulty(q) === 'medium');
-    mathTemplatesHard = baseTagged.filter((q) => classifyMathDifficulty(q) === 'hard');
+    state.mathTemplatesEasy = base.filter((q) => classifyMathDifficulty(q) === 'easy');
+    state.mathTemplatesMedium = base.filter((q) => classifyMathDifficulty(q) === 'medium');
+    state.mathTemplatesHard = base.filter((q) => classifyMathDifficulty(q) === 'hard');
 
-    if (mathTemplatesEasy.length === 0) mathTemplatesEasy = baseTagged.slice(0, Math.max(1, Math.floor(baseTagged.length / 3)));
-    if (mathTemplatesMedium.length === 0) mathTemplatesMedium = baseTagged.slice(0, Math.max(1, Math.floor(baseTagged.length / 2)));
-    if (mathTemplatesHard.length === 0) mathTemplatesHard = baseTagged.slice();
+    if (state.mathTemplatesEasy.length === 0) state.mathTemplatesEasy = base.slice(0, Math.max(1, Math.floor(base.length / 3)));
+    if (state.mathTemplatesMedium.length === 0) state.mathTemplatesMedium = base.slice(0, Math.max(1, Math.floor(base.length / 2)));
+    if (state.mathTemplatesHard.length === 0) state.mathTemplatesHard = base.slice();
 
-    mathPoolEasy = shuffle(mathTemplatesEasy);
-    mathPoolMedium = shuffle(mathTemplatesMedium);
-    mathPoolHard = shuffle(mathTemplatesHard);
-    textQueue = shuffle(textQuestions.map((q) => ({ ...q })));
-    mathSinceLastText = 0;
-    nextTextIn = randInt(3, 6);
-    mathAskedTotal = 0;
-    mathAttemptedAnswers = 0;
-    mathCorrectAnswers = 0;
-    adaptiveLevel = 0;
-    adaptiveCorrectStreak = 0;
-    adaptiveWrongStreak = 0;
+    state.mathPoolEasy = shuffle(state.mathTemplatesEasy);
+    state.mathPoolMedium = shuffle(state.mathTemplatesMedium);
+    state.mathPoolHard = shuffle(state.mathTemplatesHard);
+    state.textQueue = shuffle(textQuestions.map((q) => ({ ...q })));
 
-    currentQuestion= null;
-    playerScore    = 0;
-    correctAnswers = 0;
-    attempted      = 0;
-    negativeStreak = 0;
-    running        = true;
-    awaitingAnswer = false;
-    startTime      = Date.now();
+    state.playerScore = 0;
+    state.correctAnswers = 0;
+    state.attempted = 0;
+    state.negativeStreak = 0;
+    state.mathAskedTotal = 0;
+    state.mathAttemptedAnswers = 0;
+    state.mathCorrectAnswers = 0;
+    state.adaptiveLevel = 0;
+    state.running = true;
+    state.awaitingAnswer = false;
+    state.startTime = Date.now();
 
-    timerDisplay.textContent       = formatTime(totalTimeMs);
-    questionCount.textContent      = `0/${currentBank.length}`;
-    correctCount.textContent       = '0';
-    scoreDisplay.textContent       = '0';
-    scoreDisplay.style.color       = '#64748b';
-    feedbackText.textContent       = '';
-    feedbackText.className         = 'feedback';
-    answerInput.value              = '';
-    answerInput.disabled           = false;
-    submitButton.disabled          = false;
-    resetQuestionTimerUI();
-    resetBots();
+    DOM.questionCount.textContent = `0/${state.currentBank.length}`;
+    DOM.correctCount.textContent = '0';
+    DOM.scoreDisplay.textContent = '0';
+    DOM.scoreDisplay.style.color = '#64748b';
+    DOM.feedbackText.textContent = '';
+    DOM.feedbackText.className = 'feedback';
+    DOM.answerInput.value = '';
+    DOM.answerInput.disabled = false;
+    DOM.submitButton.disabled = false;
+    DOM.questionTimerDisplay.textContent = '07s';
+    DOM.questionTimerFill.style.width = '100%';
+    botState.forEach((b,i) => { b.score = 0; b.answered = 0; b.timeout = null; updateBotUI(i); });
     updateRankBanner();
 
-    if (timerInterval) clearInterval(timerInterval);
-    clearQuestionTimers();
-    timerInterval = setInterval(updateTimer, 100);
+    if (state.timerInterval) clearInterval(state.timerInterval);
+    state.timerInterval = setInterval(updateTimer, 100);
 
-    introPanel.classList.add('hidden');
-    endPanel.classList.add('hidden');
-    taskPanel.classList.remove('hidden');
+    DOM.introPanel.classList.add('hidden');
+    DOM.endPanel.classList.add('hidden');
+    DOM.taskPanel.classList.remove('hidden');
     nextQuestion();
   }
 
-  /* ─── EVENT LISTENERS ──────────────────────────────────────── */
-  document.addEventListener('pointerdown', unlockAudio, { once: true });
-  document.addEventListener('keydown', unlockAudio, { once: true });
-  startButton.addEventListener('click', resetTask);
-  answerInput.addEventListener('keydown', e => {
+  DOM.startButton.addEventListener('click', startTask);
+  DOM.answerInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
   });
-  submitButton.addEventListener('click', submitAnswer);
+  DOM.submitButton.addEventListener('click', submitAnswer);
 
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('autostart') === '1') {
-    setTimeout(() => resetTask(), 30);
-  }
+  // Keep focus on input to maintain keyboard visibility on mobile
+  DOM.answerInput.addEventListener('blur', (e) => {
+    if (state.running && state.awaitingAnswer) {
+      setTimeout(() => DOM.answerInput.focus(), 10);
+    }
+  });
 </script>
 </body>
 </html>
