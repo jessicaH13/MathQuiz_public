@@ -555,7 +555,7 @@
   <div id="introPanel">
     <div class="panel-hero">
       <h1>Mental Arithmetic Task</h1>
-      <p>You have <strong>5 minutes</strong> to complete as many questions as possible. For each question you have <strong>5 seconds</strong> to answer. Type your answer and press Enter.</p>
+      <p>You have <strong>5 minutes</strong> to complete as many questions as possible. For each question you have <strong>7 seconds</strong> to answer. Type your answer and press Enter.</p>
     </div>
     <div class="panel-body">
 
@@ -569,8 +569,8 @@
         <ul>
           <li>You will be competing live with two other participants.</li>
           <li>Answer each arithmetic question as fast and accurately as possible.</li>
-          <li>You have <strong>5 seconds</strong> per question — the timer starts when the question appears.</li>
-          <li>Correct answer: <strong>+10 points</strong> &nbsp;|&nbsp; Incorrect or time-up: <strong>−5 points</strong></li>
+          <li>You have <strong>7 seconds</strong> per question — the timer starts when the question appears.</li>
+          <li>Correct answer: <strong>+10 points</strong> &nbsp;|&nbsp; Incorrect or time-up: <strong>0 points</strong></li>
           <li>Your rank is updated in real time. Top performer wins.</li>
           <li>Use <strong>Enter</strong> to answer. Decimals: use <code>.</code> or <code>,</code></li>
         </ul>
@@ -583,7 +583,7 @@
 
       <div class="preview-box">
         <h3>Session Preview</h3>
-        <p>After you press <strong>Join session &amp; start</strong>, the test screen opens with your question in the center, a 5-second question timer, your live score and rank, plus two simulated competitors on the right. This panel is only a preview of what the next screen will show.</p>
+        <p>After you press <strong>Join session &amp; start</strong>, the test screen opens with your question in the center, a 7-second question timer, your live score and rank, plus two simulated competitors on the right. This panel is only a preview of what the next screen will show.</p>
       </div>
     </div>
   </div>
@@ -644,7 +644,7 @@
       <!-- question timer -->
       <div class="question-timer-focus" id="questionTimerBox">
         Question Time Left
-        <span id="questionTimerDisplay">05s</span>
+        <span id="questionTimerDisplay">07s</span>
         <div class="question-time-bar"><div id="questionTimerFill" class="question-time-fill"></div></div>
       </div>
 
@@ -804,7 +804,7 @@
   let questionQueue = [];
   let currentQuestion = null;
   let totalTimeMs = 300000;
-  let questionTimeLimitMs = 5000;
+  let questionTimeLimitMs = 7000;
   let startTime = null;
   let timerInterval = null;
   let questionTimerInterval = null;
@@ -826,6 +826,8 @@
   let mathSinceLastText = 0;
   let nextTextIn = 4;
   let mathAskedTotal = 0;
+  let mathAttemptedAnswers = 0;
+  let mathCorrectAnswers = 0;
   let adaptiveLevel = 0;
   let adaptiveCorrectStreak = 0;
   let adaptiveWrongStreak = 0;
@@ -971,8 +973,15 @@
     return null;
   }
   function currentTargetDifficulty() {
-    if (mathAskedTotal < 10) return 'easy';
-    if (mathAskedTotal < 20) return adaptiveLevel <= 0 ? 'easy' : 'medium';
+    if (mathAskedTotal < 5) return 'easy';
+    if (mathAskedTotal < 10) return 'hard';
+
+    if (mathAttemptedAnswers >= 6) {
+      const accuracy = mathCorrectAnswers / Math.max(1, mathAttemptedAnswers);
+      if (accuracy >= 0.8) return 'hard';
+      if (accuracy <= 0.35) return 'easy';
+    }
+
     if (adaptiveLevel <= 0) return 'easy';
     if (adaptiveLevel === 1) return 'medium';
     return 'hard';
@@ -1150,7 +1159,7 @@
   }
   function resetQuestionTimerUI() {
     questionTimerBox.classList.remove('warning','danger');
-    questionTimerDisplay.textContent = '05s';
+    questionTimerDisplay.textContent = '07s';
     questionTimerFill.style.width = '100%';
   }
   function updateQuestionTimer() {
@@ -1207,7 +1216,7 @@
       mathAskedTotal += 1;
     }
 
-    questionTimeLimitMs = currentQuestion.qType === 'text' ? 10000 : 5000;
+    questionTimeLimitMs = 7000;
     awaitingAnswer = true;
     questionText.textContent = currentQuestion.question;
     answerInput.value = '';
@@ -1231,15 +1240,16 @@
     const correct = isCurrentQuestionCorrect(answerInput.value);
     attempted += 1;
     const isMathQuestion = currentQuestion.qType === 'math';
+    if (isMathQuestion) mathAttemptedAnswers += 1;
     if (correct) {
       correctAnswers += 1;
+      if (isMathQuestion) mathCorrectAnswers += 1;
       playerScore += 10;
       negativeStreak = 0;
       updateAdaptiveMathState(true, isMathQuestion);
       feedbackText.textContent = 'correct';
       feedbackText.className = 'feedback success';
     } else {
-      playerScore -= 5;
       negativeStreak += 1;
       updateAdaptiveMathState(false, isMathQuestion);
       feedbackText.textContent = 'WRONG';
@@ -1266,7 +1276,7 @@
     clearBotTimeouts();
     playTimeUpTone();
     attempted += 1;
-    playerScore -= 5;
+    if (currentQuestion?.qType === 'math') mathAttemptedAnswers += 1;
     negativeStreak += 1;
     updateAdaptiveMathState(false, currentQuestion?.qType === 'math');
     feedbackText.textContent = 'TIME OUT!';
@@ -1340,6 +1350,8 @@
     mathSinceLastText = 0;
     nextTextIn = randInt(3, 6);
     mathAskedTotal = 0;
+    mathAttemptedAnswers = 0;
+    mathCorrectAnswers = 0;
     adaptiveLevel = 0;
     adaptiveCorrectStreak = 0;
     adaptiveWrongStreak = 0;
