@@ -353,49 +353,6 @@
       justify-content: center;
       font-size: 0.85rem;
       white-space: nowrap;
-
-        /* ── VIRTUAL KEYBOARD ─────────────────────────────────────── */
-        .virtual-keyboard {
-          margin-top: 12px;
-          padding: 12px;
-          background: #f1f5f9;
-          border-radius: 12px;
-          border: 1px solid #e2e8f0;
-        }
-        .keyboard-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 8px;
-        }
-        .kbd-btn {
-          width: 100%;
-          min-height: 48px;
-          border-radius: 10px;
-          border: 1px solid #cbd5e1;
-          background: #fff;
-          color: #0f172a;
-          font-weight: 600;
-          font-size: 1.1rem;
-          cursor: pointer;
-          transition: all .1s;
-          padding: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          touch-action: manipulation;
-        }
-        .kbd-btn:active {
-          background: #e0e7ff;
-          border-color: #3b82f6;
-          transform: scale(0.95);
-        }
-        .kbd-btn:hover {
-          background: #f8fafc;
-          border-color: #94a3b8;
-        }
-        .kbd-backspace {
-          font-size: 1.3rem;
-        }
     }
 
     #endPanel {
@@ -584,40 +541,10 @@
       <div class="field">
         <label for="answerInput">Your answer</label>
         <div class="input-wrapper">
-          <input id="answerInput" type="text" placeholder="Type answer" autocomplete="off" inputmode="none" readonly />
+          <input id="answerInput" type="text" placeholder="Type answer" autocomplete="off" inputmode="decimal" />
           <button id="submitButton" class="secondary" type="button">Submit</button>
         </div>
-        <!-- Virtual Numeric Keypad -->
-        <div class="virtual-keyboard">
-          <div class="keyboard-grid">
-            <button class="kbd-btn" data-key="1">1</button>
-            <button class="kbd-btn" data-key="2">2</button>
-            <button class="kbd-btn" data-key="3">3</button>
-            <button class="kbd-btn" data-key="4">4</button>
-            <button class="kbd-btn" data-key="5">5</button>
-            <button class="kbd-btn" data-key="6">6</button>
-            <button class="kbd-btn" data-key="7">7</button>
-            <button class="kbd-btn" data-key="8">8</button>
-            <button class="kbd-btn" data-key="9">9</button>
-            <button class="kbd-btn" data-key="0">0</button>
-            <button class="kbd-btn" data-key=".">.</button>
-            <button class="kbd-btn kbd-backspace" data-key="backspace">⌫</button>
-          </div>
-        </div>
       </div>
-          .keyboard-grid {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-          }
-          .kbd-btn {
-            min-height: 52px;
-            font-size: 1rem;
-            border-radius: 8px;
-          }
-          .virtual-keyboard {
-            margin-top: 10px;
-            padding: 10px;
-          }
     </div>
 
     <div class="task-rank-footer">
@@ -930,15 +857,8 @@
     DOM.questionTimerFill.style.width = '100%';
     startQuestionTimer();
     botState.forEach((_, i) => scheduleBotAnswer(i));
-    
-    // Aggressive keyboard trigger: focus multiple times with RAF for reliability
+
     DOM.answerInput.focus();
-    requestAnimationFrame(() => {
-      DOM.answerInput.focus();
-      requestAnimationFrame(() => {
-        DOM.answerInput.focus();
-      });
-    });
   }
 
   function submitAnswer() {
@@ -1082,36 +1002,11 @@
     nextQuestion();
   }
 
-  // Virtual keyboard handler
-  const kbdBtns = document.querySelectorAll('.kbd-btn');
-  kbdBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const key = btn.dataset.key;
-      if (key === 'backspace') {
-        DOM.answerInput.value = DOM.answerInput.value.slice(0, -1);
-      } else {
-        DOM.answerInput.value += key;
-      }
-    });
-  });
-
-  // Prevent native keyboard on input
-  DOM.answerInput.addEventListener('focus', (e) => {
-    e.target.blur();
-  });
-
   DOM.startButton.addEventListener('click', startTask);
   DOM.answerInput.addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); submitAnswer(); }
   });
   DOM.submitButton.addEventListener('click', submitAnswer);
-
-  // Prevent blur
-  DOM.answerInput.addEventListener('blur', (e) => {
-    if (state.running && state.awaitingAnswer) {
-      // Using virtual keyboard instead
-    }
-  });
 </script>
 </body>
 </html>
