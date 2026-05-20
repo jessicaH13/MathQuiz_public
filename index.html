@@ -462,31 +462,28 @@
   <div id="introPanel">
     <div class="panel-hero">
       <h1>Mental Arithmetic Task</h1>
-      <p>You have <strong>5 minutes</strong> to complete as many questions as possible. For each question you have <strong>10 seconds</strong> to answer. Type your answer and press Enter or tap Submit.</p>
+      <p>You have <strong>5 minutes</strong> to answer as many questions as you can. Each question gives you <strong>10 seconds</strong>. Type your answer and press Enter or tap Submit.</p>
     </div>
     <div class="panel-body">
       <div class="monitor-badge">
         <div class="dot"></div>
-        A researcher is monitoring your session remotely. Your results will be recorded and compared against other participants.
+        Stay focused and do your best. Your responses are recorded for this session.
       </div>
       <div class="info-box">
         <strong>Instructions</strong>
         <ul>
-          <li>You will be competing live with two other participants.</li>
-          <li>Answer each arithmetic question as fast and accurately as possible.</li>
+          <li>You will see your score and rank during the task.</li>
+          <li>Answer each arithmetic question quickly and accurately.</li>
           <li>You have <strong>10 seconds</strong> per question — the timer starts when the question appears.</li>
           <li>Correct answer: <strong>+10 points</strong> &nbsp;|&nbsp; Incorrect or time-up: <strong>0 points</strong></li>
-          <li>Your rank is updated in real time. Top performer wins.</li>
+          <li>Keep going even if you miss one — the next question appears right away.</li>
           <li>Use <strong>Enter</strong> or tap <strong>Submit</strong>. Decimals: use <code>.</code> or <code>,</code></li>
         </ul>
-      </div>
-      <div class="info-box" style="background:#f8fafc; border-color:#e2e8f0;">
-        <strong>Question bank:</strong> MAT #1 — Mobile optimized with persistent keyboard
       </div>
       <button id="startButton">Join session &amp; start</button>
       <div class="preview-box">
         <h3>Session Preview</h3>
-        <p>After you press <strong>Join session &amp; start</strong>, the test screen opens with your question, a 10-second timer, your score and rank. <strong>The keyboard will stay visible on mobile with a Submit button for easy access.</strong></p>
+        <p>After you press <strong>Join session &amp; start</strong>, the test screen opens with your question, a 10-second timer, and your live score. <strong>The keyboard stays visible on mobile with a Submit button for easy access.</strong></p>
       </div>
     </div>
   </div>
@@ -677,11 +674,15 @@
   function shouldKeepMathQuestion(q) {
     const numberTokens = q.question.match(/-?\d+(?:[\.,]\d+)?/g) || [];
     const hasZeroDecimal = numberTokens.some((token) => /^0[\.,]\d+$/i.test(token));
+    const hasHighPrecisionDecimal = numberTokens.some((token) => {
+      const parts = token.replace(',', '.').split('.');
+      return parts.length === 2 && parts[1].length > 2;
+    });
     const hasVeryLargeNumber = numberTokens.some((token) => {
       const integerPart = token.replace(',', '.').split('.')[0].replace('-', '');
       return integerPart.length >= 4;
     });
-    return !hasZeroDecimal && !hasVeryLargeNumber;
+    return !hasZeroDecimal && !hasHighPrecisionDecimal && !hasVeryLargeNumber;
   }
 
   function classifyMathDifficulty(q) {
@@ -703,7 +704,7 @@
   function drawMathQ(level) {
     refillPools();
     const pools = { easy: state.mathPoolEasy, medium: state.mathPoolMedium, hard: state.mathPoolHard };
-    const order = level === 'easy' ? ['easy','medium','hard'] : level === 'medium' ? ['medium','easy','hard'] : ['hard','medium','easy'];
+    const order = level === 'easy' ? ['easy','medium'] : level === 'medium' ? ['medium','easy'] : ['hard','medium','easy'];
     for (const lv of order) {
       if (pools[lv].length > 0) return pools[lv].shift();
     }
@@ -712,15 +713,14 @@
 
   function targetDifficulty() {
     if (state.mathAskedTotal < 5) return 'easy';
-    if (state.mathAskedTotal < 10) return 'hard';
+    if (state.mathAskedTotal < 10) return 'medium';
     if (state.mathAttemptedAnswers >= 6) {
       const acc = state.mathCorrectAnswers / Math.max(1, state.mathAttemptedAnswers);
-      if (acc >= 0.8) return 'hard';
+      if (acc >= 0.8) return 'medium';
       if (acc <= 0.35) return 'easy';
     }
     if (state.adaptiveLevel <= 0) return 'easy';
-    if (state.adaptiveLevel === 1) return 'medium';
-    return 'hard';
+    return 'medium';
   }
 
   function updateAdaptive(correct, isMath) {
@@ -729,7 +729,7 @@
       state.adaptiveCorrectStreak += 1;
       state.adaptiveWrongStreak = 0;
       if (state.adaptiveCorrectStreak >= 3) {
-        state.adaptiveLevel = Math.min(2, state.adaptiveLevel + 1);
+        state.adaptiveLevel = Math.min(1, state.adaptiveLevel + 1);
         state.adaptiveCorrectStreak = 0;
       }
     } else {
