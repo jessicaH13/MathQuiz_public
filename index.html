@@ -462,7 +462,7 @@
   <div id="introPanel">
     <div class="panel-hero">
       <h1>Mental Arithmetic Task</h1>
-      <p>You have <strong>5 minutes</strong> to complete as many questions as possible. For each question you have <strong>7 seconds</strong> to answer. Type your answer and press Enter or tap Submit.</p>
+      <p>You have <strong>5 minutes</strong> to complete as many questions as possible. For each question you have <strong>10 seconds</strong> to answer. Type your answer and press Enter or tap Submit.</p>
     </div>
     <div class="panel-body">
       <div class="monitor-badge">
@@ -474,7 +474,7 @@
         <ul>
           <li>You will be competing live with two other participants.</li>
           <li>Answer each arithmetic question as fast and accurately as possible.</li>
-          <li>You have <strong>7 seconds</strong> per question — the timer starts when the question appears.</li>
+          <li>You have <strong>10 seconds</strong> per question — the timer starts when the question appears.</li>
           <li>Correct answer: <strong>+10 points</strong> &nbsp;|&nbsp; Incorrect or time-up: <strong>0 points</strong></li>
           <li>Your rank is updated in real time. Top performer wins.</li>
           <li>Use <strong>Enter</strong> or tap <strong>Submit</strong>. Decimals: use <code>.</code> or <code>,</code></li>
@@ -486,7 +486,7 @@
       <button id="startButton">Join session &amp; start</button>
       <div class="preview-box">
         <h3>Session Preview</h3>
-        <p>After you press <strong>Join session &amp; start</strong>, the test screen opens with your question, a 7-second timer, your score and rank. <strong>The keyboard will stay visible on mobile with a Submit button for easy access.</strong></p>
+        <p>After you press <strong>Join session &amp; start</strong>, the test screen opens with your question, a 10-second timer, your score and rank. <strong>The keyboard will stay visible on mobile with a Submit button for easy access.</strong></p>
       </div>
     </div>
   </div>
@@ -531,7 +531,7 @@
       </div>
 
       <div class="question-timer-focus" id="questionTimerBox">
-        Question Time Left <span id="questionTimerDisplay">07s</span>
+        Question Time Left <span id="questionTimerDisplay">10s</span>
         <div class="question-time-bar"><div id="questionTimerFill" class="question-time-fill"></div></div>
       </div>
 
@@ -642,7 +642,7 @@
   };
 
   let state = {
-    currentBank: [], currentQuestion: null, totalTimeMs: 300000, questionTimeLimitMs: 7000,
+    currentBank: [], currentQuestion: null, totalTimeMs: 300000, questionTimeLimitMs: 10000,
     startTime: null, timerInterval: null, questionTimerInterval: null, transitionTimeout: null,
     questionDeadline: null, playerScore: 0, correctAnswers: 0, attempted: 0, running: false,
     awaitingAnswer: false, negativeStreak: 0, mathPoolEasy: [], mathPoolMedium: [], mathPoolHard: [],
@@ -672,6 +672,16 @@
 
   function extractNumbers(txt) {
     return (txt.match(/-?\d+(?:[\.,]\d+)?/g) || []).map(t => Number(t.replace(',','.'))).filter(Number.isFinite);
+  }
+
+  function shouldKeepMathQuestion(q) {
+    const numberTokens = q.question.match(/-?\d+(?:[\.,]\d+)?/g) || [];
+    const hasZeroDecimal = numberTokens.some((token) => /^0[\.,]\d+$/i.test(token));
+    const hasVeryLargeNumber = numberTokens.some((token) => {
+      const integerPart = token.replace(',', '.').split('.')[0].replace('-', '');
+      return integerPart.length >= 4;
+    });
+    return !hasZeroDecimal && !hasVeryLargeNumber;
   }
 
   function classifyMathDifficulty(q) {
@@ -853,7 +863,7 @@
     DOM.feedbackText.textContent = '';
     DOM.feedbackText.className = 'feedback';
     DOM.questionTimerBox.classList.remove('warning','danger');
-    DOM.questionTimerDisplay.textContent = '07s';
+    DOM.questionTimerDisplay.textContent = '10s';
     DOM.questionTimerFill.style.width = '100%';
     startQuestionTimer();
     botState.forEach((_, i) => scheduleBotAnswer(i));
@@ -948,7 +958,7 @@
   }
 
   function startTask() {
-    const base = questionsA.map((q) => {
+    const base = questionsA.filter(shouldKeepMathQuestion).map((q) => {
       const withType = { ...q, qType: 'math', _nums: extractNumbers(q.question) };
       return withType;
     });
@@ -988,7 +998,7 @@
     DOM.answerInput.value = '';
     DOM.answerInput.disabled = false;
     DOM.submitButton.disabled = false;
-    DOM.questionTimerDisplay.textContent = '07s';
+    DOM.questionTimerDisplay.textContent = '10s';
     DOM.questionTimerFill.style.width = '100%';
     botState.forEach((b,i) => { b.score = 0; b.answered = 0; b.timeout = null; updateBotUI(i); });
     updateRankBanner();
